@@ -73,7 +73,7 @@ export default function Header() {
                  {/* Profile Link with Image */}
                 <Link 
                   href="/profile" 
-                  className={`flex items-center text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 px-2 py-1 rounded-md text-sm font-medium ${
+                  className={`flex items-center text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-1.5 rounded-md text-sm font-medium ${
                     isActive('/profile') ? 'bg-gray-100 dark:bg-gray-700' : ''
                   }`}
                 >
@@ -83,12 +83,12 @@ export default function Header() {
                    <span className="hidden sm:inline">פרופיל</span> 
                    <span className="sm:hidden">{session.user?.name?.split(' ')[0] || 'פרופיל'}</span>
                  </Link>
-                <button
-                  onClick={() => signOut({ callbackUrl: '/' })} // Sign out and redirect to home
-                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap"
-                >
-                  התנתקות
-                </button>
+                 <button
+                   onClick={() => signOut({ callbackUrl: '/' })} // Sign out and redirect to home
+                   className="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap"
+                 >
+                   התנתקות
+                 </button>
               </>
             )}
           </div>
