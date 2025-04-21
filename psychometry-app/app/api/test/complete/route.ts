@@ -42,9 +42,10 @@ export async function POST(request: Request) {
             section: 'full_test', // Indicate it's a full test
             score: 0, // Placeholder score - needs calculation
             answers: JSON.stringify(sections), // Store section answers (structure needs finalization)
-            // essayContent: essayContent, // Needs essayContent field in schema
+            essayContent: essayContent, // <<< Save the essay content (Requires DB schema change!)
             timeSpent: overallTimeSpent || 0,
             completedAt: new Date(),
+            testType: testType // <<< Added missing field
           },
         });
 
@@ -82,6 +83,7 @@ export async function POST(request: Request) {
           answers: JSON.stringify(answers),
           timeSpent,
           completedAt: new Date(),
+          testType: testType // <<< Add testType here as well
         },
       });
       
@@ -114,8 +116,5 @@ export async function POST(request: Request) {
         headers: { 'Content-Type': 'application/json' }
       }
     );
-  } finally {
-    // Disconnect Prisma client
-    await prisma.$disconnect();
   }
 } 

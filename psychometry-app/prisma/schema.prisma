@@ -44,10 +44,12 @@ model Question {
 model TestAttempt {
   id          String   @id @default(cuid())
   userId      String
-  section     String   // verbal, quantitative, english
+  testType    String   // Add this: 'full', 'verbal', 'quantitative', 'english'
+  section     String   // verbal, quantitative, english  <- Keep this for now, or decide if testType replaces it
   score       Int
   answers     String   // JSON string of answers
   timeSpent   Int?     // Added timeSpent field (optional Int for seconds)
   completedAt DateTime @default(now())
   user        User     @relation(fields: [userId], references: [id])
+  essayContent String?  // Ensure this is optional
 } 

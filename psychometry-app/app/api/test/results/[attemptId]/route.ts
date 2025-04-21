@@ -427,13 +427,44 @@ interface TestAttemptResult {
 }
 // ---------------------------------------------
 
-// TODO: Replace this temporary function with actual DB queries for questions
-async function getQuestionDetails(questionId: string): Promise<Partial<Question> | null> {
-    // Placeholder: In a real app, query your DB (e.g., prisma.question.findUnique({ where: { id: questionId } }))
-    // For now, return minimal data or null
-    console.warn(`getQuestionDetails for ${questionId} not implemented, returning null.`);
-    return null; 
+// --- Updated getQuestionDetails to use hardcoded data ---
+async function getQuestionDetails(questionId: string): Promise<Question | null> {
+    console.log(`Fetching details for question ID: ${questionId} (type: ${typeof questionId})`);
+    
+    // Expected format: type-sectionIndex-originalId (e.g., quantitative-1-1)
+    const parts = questionId.split('-');
+    if (parts.length < 3) {
+        console.warn(`Invalid question ID format: ${questionId}`);
+        return null;
+    }
+    
+    const sectionType = parts[0]; // e.g., 'quantitative'
+    const originalIdNum = parseInt(parts[parts.length - 1], 10); // Get the last part as number
+
+    if (isNaN(originalIdNum)) {
+         console.warn(`Could not parse original ID number from: ${questionId}`);
+         return null;
+    }
+
+    const allQuestionsData = await getAllQuestions();
+    const sectionQuestions = allQuestionsData[sectionType];
+
+    if (!sectionQuestions) {
+        console.warn(`No hardcoded questions found for section type: ${sectionType}`);
+        return null;
+    }
+
+    // Find the question in the specific section array using the parsed original numeric ID
+    const foundQuestion = sectionQuestions.find(q => q.id === originalIdNum);
+
+    if (!foundQuestion) {
+        console.warn(`Question details not found for type ${sectionType} and original ID ${originalIdNum}`);
+        return null;
+    }
+    console.log(`Found details for question ID: ${questionId} (Original ID: ${originalIdNum})`);
+    return foundQuestion;
 }
+// -------------------------------------------------------
 
 export async function GET(
   request: Request,
@@ -460,7 +491,9 @@ export async function GET(
 
     // --- Parse and Structure the Data --- 
     let parsedSectionsData: any[] = [];
-    let essayContentFromDb = null; // Placeholder
+    // Fetch essay content directly from the attempt record
+    const essayContentFromDb = testAttempt.essayContent; // <<< Assuming schema was updated with essayContent field
+
     try {
         if (testAttempt.answers) {
             // Assuming testAttempt.answers stores the JSON string of SectionSubmissionData[] for full tests
@@ -493,27 +526,24 @@ export async function GET(
         };
 
         if (sectionData.type === 'essay') {
-             sectionResult.essayContent = essayContentFromDb || sectionData.essayContent || "(תוכן חיבור לא נשמר)"; // Use placeholder if not saved
+             // Use the content fetched directly from the DB record
+             sectionResult.essayContent = essayContentFromDb ?? "(שגיאה בטעינת תוכן חיבור)"; 
         } else if (Array.isArray(sectionData.answers)) {
             sectionResult.answers = await Promise.all(
                 sectionData.answers.map(async (ans: any): Promise<AnswerDetail> => {
-                // Fetch details for each question (text, options, correct answer)
-                // This part is crucial but depends heavily on how questions are stored.
-                const questionDetails = await getQuestionDetails(ans.questionId);
+                const questionDetails = await getQuestionDetails(ans.questionId); // Use the updated function
                 
-                // TODO: Implement actual calculation/retrieval of isCorrect & correctAnswerIndex
-                // This likely requires fetching the correct answer from the DB based on questionId.
-                const correctAnswerIndexPlaceholder = undefined; // Placeholder
-                const isCorrectPlaceholder = undefined; // Placeholder
+                // Calculate correctness based on fetched details
+                const correctAnswerIndex = questionDetails?.correctAnswer; // Get correct index from data
+                const isCorrect = (correctAnswerIndex !== undefined && ans.selectedAnswerIndex === correctAnswerIndex);
 
                 return {
                     questionId: ans.questionId,
                     selectedAnswerIndex: ans.selectedAnswerIndex,
-                    // Populate from fetched details or provide defaults
-                    questionText: questionDetails?.text ?? `טקסט שאלה חסר (ID: ${ans.questionId})`, // Fallback text
-                    options: questionDetails?.options ?? [], // Default to empty array if null/undefined
-                    correctAnswerIndex: correctAnswerIndexPlaceholder,
-                    isCorrect: isCorrectPlaceholder,
+                    questionText: questionDetails?.text ?? `טקסט שאלה חסר (ID: ${ans.questionId})`,
+                    options: questionDetails?.options ?? [],
+                    correctAnswerIndex: correctAnswerIndex, // Use the fetched correct index
+                    isCorrect: isCorrect, // Use the calculated correctness
                 };
             })
           );

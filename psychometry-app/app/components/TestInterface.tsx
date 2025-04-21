@@ -1,18 +1,10 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Question } from '@/types'; // Assuming you have a types file
+import { Question } from '@prisma/client'; // Corrected import path for Prisma types
 import WritingTaskInterface from './WritingTaskInterface'; // Import the WritingTaskInterface
-
-interface Question {
-  id: number;
-  text: string;
-  options: string[];
-  correctAnswer: number;
-  explanation: string;
-}
 
 interface TestInterfaceProps {
   section: 'verbal' | 'quantitative' | 'english' | 'hebrew';

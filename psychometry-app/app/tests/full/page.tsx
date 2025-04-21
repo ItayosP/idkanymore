@@ -90,7 +90,7 @@ export default function FullTestPage() {
         // const data = await response.json();
         // Simulate API call delay and dummy data
         await new Promise(resolve => setTimeout(resolve, 500)); 
-        const dummyQuestions: Question[] = Array.from({ length: section.type === 'verbal' ? 23 : 20 }, (_, i) => ({
+        const dummyQuestions: Question[] = Array.from({ length: 1 }, (_, i) => ({
             id: `${section.type}-${sectionIndex}-${i + 1}`,
             text: `זוהי שאלה מספר ${i + 1} מפרק ${section.type} (מדד ${sectionIndex}). ${section.type === 'pilot' ? '(פיילוט)': ''}`,
             options: ['תשובה 1', 'תשובה 2', 'תשובה 3', 'תשובה 4']
