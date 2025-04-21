@@ -1,13 +1,11 @@
 {
   "/profile/page": "app/profile/page.js",
+  "/tests/full/page": "app/tests/full/page.js",
+  "/results/completed/page": "app/results/completed/page.js",
   "/dashboard/page": "app/dashboard/page.js",
-  "/page": "app/page.js",
-  "/tests/page": "app/tests/page.js",
   "/api/dashboard/route": "app/api/dashboard/route.js",
-  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/tests/page": "app/tests/page.js",
   "/api/auth/profile/route": "app/api/auth/profile/route.js",
-  "/tests/verbal/page": "app/tests/verbal/page.js",
-  "/results/page": "app/results/page.js",
-  "/login/page": "app/login/page.js",
-  "/tests/full/page": "app/tests/full/page.js"
+  "/page": "app/page.js",
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js"
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation'; // Import useRouter
 import EssayTask from '../../components/EssayTask';
 import TestSection from '../../components/TestSection'; // Import TestSection
 
@@ -51,6 +52,7 @@ export default function FullTestPage() {
   const [allAnswers, setAllAnswers] = useState<{ [sectionIndex: number]: { [questionId: string]: number } }>({});
   const [sectionQuestions, setSectionQuestions] = useState<{ [sectionIndex: number]: Question[] }>({});
   const [isLoading, setIsLoading] = useState(false); // Loading state for questions
+  const router = useRouter(); // Get router instance
 
   // --- Question Fetching Logic (Placeholder) ---
   useEffect(() => {
@@ -151,7 +153,9 @@ export default function FullTestPage() {
       console.log("Essay Content:", essayContent);
       // TODO: Calculate score (considering pilots)
       // TODO: Submit data to backend (e.g., POST /api/test/complete)
-      // TODO: Navigate to results page
+      
+      // Navigate to the results page
+      router.push('/results/completed'); 
     }
   };
 
