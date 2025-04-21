@@ -15,6 +15,13 @@ interface TestSection {
 export default function TestsPage() {
   const [testSections] = useState<TestSection[]>([
     {
+      id: 'full',
+      name: 'מבחן פסיכומטרי מלא',
+      description: 'סימולציה מלאה הכוללת את כל פרקי המבחן ומטלת כתיבה',
+      icon: '⏱️',
+      path: '/tests/full'
+    },
+    {
       id: 'verbal',
       name: 'חשיבה מילולית',
       description: 'תרגול שאלות בהבנת הנקרא, השלמת משפטים ואנלוגיות',
@@ -79,15 +86,15 @@ export default function TestsPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {testSections.map((section) => (
             <Link key={section.id} href={section.path} className="block">
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+              <div className="h-full flex flex-col bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
                 <div className="text-4xl mb-4">{section.icon}</div>
                 <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
                   {section.name}
                 </h2>
-                <p className="text-gray-600 dark:text-gray-300">
+                <p className="text-gray-600 dark:text-gray-300 flex-grow">
                   {section.description}
                 </p>
               </div>

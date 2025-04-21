@@ -204,21 +204,19 @@ export default function ProfilePage() {
             {recentAttempts && recentAttempts.length > 0 ? (
               <ul className="space-y-4">
                 {recentAttempts.map((attempt) => (
-                  <li key={attempt.id} className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700/60 rounded-md shadow-sm">
+                  <li key={attempt.id} className="flex justify-between items-center bg-gray-50 dark:bg-gray-700/60 p-3 rounded-md shadow-sm transition hover:shadow-md">
                     <div>
-                      <p className="font-medium text-gray-800 dark:text-gray-100">{getSectionName(attempt.section)}</p>
+                      <span className="font-medium text-gray-800 dark:text-white">{getSectionName(attempt.section)}</span>
                       <p className="text-xs text-gray-500 dark:text-gray-400">{formatDate(attempt.completedAt)}</p>
                     </div>
-                    <span className={`font-semibold ${attempt.score >= 70 ? 'text-green-600 dark:text-green-400' : attempt.score >= 40 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400'}`}>
+                    <span className={`font-semibold ${attempt.score >= 70 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                       {attempt.score}%
                     </span>
                   </li>
                 ))}
               </ul>
             ) : (
-               <div className="text-center text-gray-500 dark:text-gray-400 py-4">
-                 אין פעילות אחרונה.
-              </div>
+              <p className="text-gray-600 dark:text-gray-400">אין מבחנים אחרונים להצגה.</p>
             )}
              <Link 
                 href="/tests"
@@ -227,7 +225,6 @@ export default function ProfilePage() {
                 התחל מבחן חדש
               </Link>
           </div>
-
         </div>
       </div>
     </div>
