@@ -55,6 +55,11 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/results/completed/page.js"
+    ],
+    "/results/[attemptId]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/results/[attemptId]/page.js"
     ]
   }
 }

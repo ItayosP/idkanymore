@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 // Define expected Question structure (adjust based on actual data)
 interface Question {
@@ -31,6 +31,9 @@ const TestSection: React.FC<TestSectionProps> = ({
   const [timeLeft, setTimeLeft] = useState(duration);
   const [isRunning, setIsRunning] = useState(true);
 
+  const currentQuestion = questions?.[currentQuestionIndex]; // Handle potential undefined questions
+  const isAnswerSelected = currentQuestion ? answers.hasOwnProperty(currentQuestion.id) : false;
+
   // Timer Logic (similar to EssayTask)
   useEffect(() => {
     if (!isRunning || timeLeft <= 0) return;
@@ -48,34 +51,90 @@ const TestSection: React.FC<TestSectionProps> = ({
     }
   }, [timeLeft]);
 
-  const handleAnswerSelect = (questionId: string, answerIndex: number) => {
+  // --- Action Handlers (wrapped in useCallback for stable refs in effect) ---
+  const handleAnswerSelect = useCallback((questionId: string, answerIndex: number) => {
+    if (timeLeft <= 0) return; // Don't allow changes if time is up
     setAnswers((prevAnswers) => ({
       ...prevAnswers,
       [questionId]: answerIndex,
     }));
-    // Optional: Auto-advance to next question
-    // if (currentQuestionIndex < questions.length - 1) {
-    //   setCurrentQuestionIndex(currentQuestionIndex + 1);
-    // }
-  };
+  }, [timeLeft]);
 
-  const handleNextQuestion = () => {
+  const handleNextQuestion = useCallback(() => {
+    if (timeLeft <= 0 || !isAnswerSelected) return;
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     }
-  };
+  }, [currentQuestionIndex, questions.length, timeLeft, isAnswerSelected]);
 
-  const handlePrevQuestion = () => {
+  const handlePrevQuestion = useCallback(() => {
+    if (timeLeft <= 0) return;
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
-  };
+  }, [currentQuestionIndex, timeLeft]);
 
-  const handleSectionComplete = () => {
+  const handleSectionComplete = useCallback(() => {
+    if (timeLeft <= 0 && isRunning) return; // Prevent manual complete if already timed out
+    // Allow completion even if time ran out but wasn't auto-submitted yet
     setIsRunning(false);
-    console.log(`Section ${sectionType} completed manually. Answers:`, answers);
+    console.log(`Section ${sectionType} completed manually/timed out. Answers:`, answers);
     onComplete(answers); // Pass answers back to parent
-  };
+  }, [answers, onComplete, sectionType, timeLeft, isRunning]);
+  // -------------------------------------------------------------------------
+
+  // --- Keyboard Navigation Effect ---
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!currentQuestion || timeLeft <= 0) return; // Ignore input if no question or time is up
+
+      // Handle number keys 1-4 for answer selection
+      if (['1', '2', '3', '4'].includes(event.key)) {
+        const answerIndex = parseInt(event.key, 10) - 1;
+        if (answerIndex >= 0 && answerIndex < currentQuestion.options.length) {
+            handleAnswerSelect(currentQuestion.id, answerIndex);
+            // Optionally prevent default if number keys interfere elsewhere
+            // event.preventDefault();
+        }
+      }
+
+      // Handle Enter key for next/finish
+      if (event.key === 'Enter') {
+        // Only proceed if an answer is selected for the current question
+        if (isAnswerSelected) { 
+            if (currentQuestionIndex === questions.length - 1) {
+                // If on the last question, Enter completes the section
+                handleSectionComplete();
+            } else {
+                // Otherwise, Enter goes to the next question
+                handleNextQuestion();
+            }
+            // Optionally prevent default form submission if this component is inside a form
+            // event.preventDefault();
+        }
+      }
+       // TODO: Add ArrowLeft/ArrowRight for prev/next?
+       // if (event.key === 'ArrowRight') { handleNextQuestion(); }
+       // if (event.key === 'ArrowLeft') { handlePrevQuestion(); }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    // Cleanup function to remove the event listener
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [
+    currentQuestion, 
+    handleAnswerSelect, 
+    handleNextQuestion, 
+    handleSectionComplete, 
+    questions.length, 
+    currentQuestionIndex, 
+    timeLeft, 
+    isAnswerSelected
+  ]);
+  // ----------------------------------
 
   // Format time left as MM:SS
   const formatTime = (seconds: number) => {
@@ -95,11 +154,9 @@ const TestSection: React.FC<TestSectionProps> = ({
   };
   
   // Placeholder for loading or error states
-  if (!questions || questions.length === 0) {
+  if (!currentQuestion) {
       return <div>Loading questions or no questions available...</div>; // TODO: Improve this state
   }
-
-  const currentQuestion = questions[currentQuestionIndex];
 
   return (
     <div dir="rtl" className="space-y-6 p-4 md:p-6 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow-md">
@@ -159,18 +216,18 @@ const TestSection: React.FC<TestSectionProps> = ({
         {currentQuestionIndex === questions.length - 1 ? (
            <button
              onClick={handleSectionComplete}
-             disabled={timeLeft <= 0}
+             disabled={timeLeft <= 0 || !isAnswerSelected}
              className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-sm transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
            >
-             סיים פרק
+             סיים פרק (Enter)
            </button>
         ) : (
           <button
             onClick={handleNextQuestion}
-            disabled={currentQuestionIndex === questions.length - 1 || timeLeft <= 0}
+            disabled={timeLeft <= 0 || !isAnswerSelected}
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm transition duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            שאלה הבאה
+            שאלה הבאה (Enter)
           </button>
         )}
       </div>

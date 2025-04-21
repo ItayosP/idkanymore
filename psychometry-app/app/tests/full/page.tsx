@@ -44,6 +44,22 @@ function shuffleArray<T>(array: T[]): T[] {
   return array;
 }
 
+// --- Interfaces and Constants ---
+interface AnswerData {
+    questionId: string;
+    selectedAnswerIndex: number;
+    // isCorrect?: boolean; // We might not need this on the frontend if backend calculates score
+    // timeSpent?: number; // We might not track per-question time yet
+}
+
+interface SectionSubmissionData {
+    type: 'verbal' | 'quantitative' | 'english' | 'pilot' | 'essay';
+    isPilot: boolean;
+    answers?: AnswerData[]; // For MC sections
+    essayContent?: string; // For essay section
+    // sectionTimeSpent?: number; // Might add later
+}
+
 export default function FullTestPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [essayPosition, setEssayPosition] = useState<'start' | 'end' | null>(null);
@@ -52,6 +68,8 @@ export default function FullTestPage() {
   const [allAnswers, setAllAnswers] = useState<{ [sectionIndex: number]: { [questionId: string]: number } }>({});
   const [sectionQuestions, setSectionQuestions] = useState<{ [sectionIndex: number]: Question[] }>({});
   const [isLoading, setIsLoading] = useState(false); // Loading state for questions
+  const [isSubmitting, setIsSubmitting] = useState(false); // Submission loading state
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
   const router = useRouter(); // Get router instance
 
   // --- Question Fetching Logic (Placeholder) ---
@@ -143,19 +161,79 @@ export default function FullTestPage() {
     handleNextStep();
   };
 
+  const handleFinishTest = async () => {
+    if (!testSequence) return;
+    console.log("Attempting to finish full test...");
+    setIsSubmitting(true);
+    setSubmissionError(null);
+
+    // 1. Prepare submission data
+    const submissionData: { 
+      testType: string;
+      sections: SectionSubmissionData[];
+      essayContent: string;
+      overallTimeSpent?: number; // TODO: Implement overall timer
+    } = {
+        testType: 'full',
+        essayContent: essayContent,
+        sections: testSequence.map((sectionDef, index) => {
+            const sectionResult: SectionSubmissionData = {
+                type: sectionDef.type === 'pilot' ? 'pilot' : sectionDef.type, // Map pilot correctly
+                isPilot: sectionDef.type === 'pilot',
+            };
+            if (sectionDef.type === 'essay') {
+                // Essay content is handled separately at the top level
+            } else {
+                const answersForSection = allAnswers[index] || {};
+                const questionsForSection = sectionQuestions[index] || [];
+                sectionResult.answers = questionsForSection.map(q => ({
+                    questionId: q.id,
+                    selectedAnswerIndex: answersForSection[q.id] ?? -1, // Use -1 or null for unanswered
+                }));
+            }
+            return sectionResult;
+        })
+    };
+
+    console.log("Submitting Data:", JSON.stringify(submissionData, null, 2));
+
+    // 2. Send data to backend
+    try {
+      const response = await fetch('/api/test/complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(submissionData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Server responded with ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (result.success && result.attemptId) {
+        console.log("Test submitted successfully. Attempt ID:", result.attemptId);
+        // 3. Navigate to the dynamic results page
+        router.push(`/results/${result.attemptId}`);
+      } else {
+        throw new Error("Submission response missing success or attemptId.");
+      }
+
+    } catch (error) {
+      console.error("Error submitting test:", error);
+      setSubmissionError(error instanceof Error ? error.message : "שגיאה בשליחת המבחן.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleNextStep = () => {
     if (testSequence && currentStep < testSequence.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Test finished
-      console.log("Full test finished!");
-      console.log("Final Answers:", allAnswers);
-      console.log("Essay Content:", essayContent);
-      // TODO: Calculate score (considering pilots)
-      // TODO: Submit data to backend (e.g., POST /api/test/complete)
-      
-      // Navigate to the results page
-      router.push('/results/completed'); 
+      // Test finished - trigger submission
+      handleFinishTest(); 
     }
   };
 
@@ -186,6 +264,23 @@ export default function FullTestPage() {
   // Render the current step based on the sequence
   const currentSectionDef = testSequence[currentStep];
   const currentQuestions = sectionQuestions[currentStep];
+
+  // Add Submission Error Display
+  if (submissionError) {
+     return (
+      <div className="min-h-screen flex flex-col items-center justify-center text-center px-4">
+        <h1 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-4">שגיאה בשליחת המבחן</h1>
+        <p className="text-gray-700 dark:text-gray-300 mb-6">{submissionError}</p>
+        <button 
+            onClick={() => handleFinishTest()} // Retry button
+            disabled={isSubmitting}
+            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm transition duration-150 ease-in-out disabled:opacity-50"
+          >
+            {isSubmitting ? 'שולח...' : 'נסה שוב לשלוח'}
+          </button>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen p-4 md:p-8 lg:p-12 bg-gray-100 dark:bg-gray-900">
@@ -226,6 +321,14 @@ export default function FullTestPage() {
               style={{ width: `${((currentStep + 1) / testSequence.length) * 100}%` }}
           ></div>
       </div>
+
+      {/* Submission Loading Overlay (Optional) */}
+      {isSubmitting && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white"></div>
+          <p className="ml-4 text-white text-xl">מעבד ושולח תוצאות...</p>
+        </div>
+      )}
     </div>
   );
 } 

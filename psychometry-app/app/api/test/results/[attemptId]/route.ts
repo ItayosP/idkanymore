@@ -401,80 +401,146 @@ async function getQuestionsByIds(section: string, questionIds: number[]): Promis
   return questionIds.map(id => questionMap.get(id)).filter(q => q !== undefined) as Question[];
 }
 
+// --- Define types matching frontend expectations ---
+interface AnswerDetail {
+  questionId: string;
+  questionText?: string; 
+  options?: string[];     
+  selectedAnswerIndex: number;
+  correctAnswerIndex?: number; // Make optional as it might not be readily available
+  isCorrect?: boolean; // Make optional as it might not be readily available
+}
+
+interface SectionResult {
+  sectionType: string; 
+  isPilot: boolean;
+  score?: number; 
+  answers?: AnswerDetail[]; 
+  essayContent?: string; 
+}
+
+interface TestAttemptResult {
+  id: string;
+  completedAt: string;
+  overallScore?: number; 
+  sections: SectionResult[];
+}
+// ---------------------------------------------
+
+// TODO: Replace this temporary function with actual DB queries for questions
+async function getQuestionDetails(questionId: string): Promise<Partial<Question> | null> {
+    // Placeholder: In a real app, query your DB (e.g., prisma.question.findUnique({ where: { id: questionId } }))
+    // For now, return minimal data or null
+    console.warn(`getQuestionDetails for ${questionId} not implemented, returning null.`);
+    return null; 
+}
 
 export async function GET(
   request: Request,
   { params }: { params: { attemptId: string } }
 ) {
   try {
+    console.log(`Results API: Received request for attemptId: ${params.attemptId}`);
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
     }
     const userId = session.user.id;
-    const { attemptId } = params;
-
-    if (!attemptId) {
-      return new NextResponse(JSON.stringify({ error: 'Attempt ID is required' }), { status: 400 });
-    }
 
     const testAttempt = await prisma.testAttempt.findUnique({
       where: {
-        id: attemptId,
-        // Ensure the user requesting the result is the one who took the test
-        userId: userId, 
+        id: params.attemptId,
+        userId: userId, // Ensure the user owns this attempt
       },
     });
 
     if (!testAttempt) {
-      return new NextResponse(JSON.stringify({ error: 'Test attempt not found or access denied' }), { status: 404 });
+      return new NextResponse(JSON.stringify({ error: 'Test attempt not found or unauthorized' }), { status: 404 });
     }
 
-    // Parse the stored answers
-    const answers = JSON.parse(testAttempt.answers as string) as {
-      questionId: string; // Note: stored as string in handleFinishTest
-      selectedAnswer: number | null;
-      isCorrect: boolean;
-      timeSpent: number;
-    }[];
+    // --- Parse and Structure the Data --- 
+    let parsedSectionsData: any[] = [];
+    let essayContentFromDb = null; // Placeholder
+    try {
+        if (testAttempt.answers) {
+            // Assuming testAttempt.answers stores the JSON string of SectionSubmissionData[] for full tests
+            // For single sections, it might store a different structure - needs handling if this route serves both.
+            if (testAttempt.section === 'full_test') { 
+                parsedSectionsData = JSON.parse(testAttempt.answers);
+            } else {
+                // Handle single section attempts if needed - adapt structure
+                console.warn(`Attempt ${params.attemptId} is not a full test, parsing might be incorrect.`);
+                // Try parsing as single section answer array? Depends on what's saved.
+                // parsedSectionsData = [{ sectionType: testAttempt.section, isPilot: false, answers: JSON.parse(testAttempt.answers) }]; // Example
+            }
+        }
+        // TODO: Retrieve actual essay content if schema was updated
+        // essayContentFromDb = testAttempt.essayContent; 
+    } catch (e) {
+      console.error("Error parsing test attempt answers:", e);
+      return new NextResponse(JSON.stringify({ error: 'Failed to parse result data' }), { status: 500 });
+    }
 
-    // Extract question IDs (convert back to numbers)
-    const questionIds = answers.map(a => parseInt(a.questionId, 10));
+    // Map parsed data to the structure expected by the frontend
+    const formattedSections: SectionResult[] = await Promise.all(
+        (parsedSectionsData || []).map(async (sectionData): Promise<SectionResult> => {
+        const sectionResult: SectionResult = {
+            sectionType: sectionData.type,
+            isPilot: sectionData.isPilot,
+            score: sectionData.score, // Pass score if calculated and saved during completion
+            answers: [],
+            essayContent: undefined,
+        };
 
-    // Fetch the corresponding questions based on the section and IDs
-    // --- This is the placeholder part --- Get the actual questions
-    const questions = await getQuestionsByIds(testAttempt.section, questionIds);
-    
-    // Create the enriched answers array separately
-    const detailedAnswers = answers.map(answer => {
-      const question = questions.find(q => q.id === parseInt(answer.questionId, 10));
-      return {
-        ...answer,
-        question: question || null, // Add the full question object
-      };
-    });
+        if (sectionData.type === 'essay') {
+             sectionResult.essayContent = essayContentFromDb || sectionData.essayContent || "(תוכן חיבור לא נשמר)"; // Use placeholder if not saved
+        } else if (Array.isArray(sectionData.answers)) {
+            sectionResult.answers = await Promise.all(
+                sectionData.answers.map(async (ans: any): Promise<AnswerDetail> => {
+                // Fetch details for each question (text, options, correct answer)
+                // This part is crucial but depends heavily on how questions are stored.
+                const questionDetails = await getQuestionDetails(ans.questionId);
+                
+                // TODO: Implement actual calculation/retrieval of isCorrect & correctAnswerIndex
+                // This likely requires fetching the correct answer from the DB based on questionId.
+                const correctAnswerIndexPlaceholder = undefined; // Placeholder
+                const isCorrectPlaceholder = undefined; // Placeholder
 
-    // Start building the response object from the attempt data
-    const resultData: { [key: string]: any } = { ...testAttempt };
+                return {
+                    questionId: ans.questionId,
+                    selectedAnswerIndex: ans.selectedAnswerIndex,
+                    // Populate from fetched details or provide defaults
+                    questionText: questionDetails?.text ?? `טקסט שאלה חסר (ID: ${ans.questionId})`, // Fallback text
+                    options: questionDetails?.options ?? [], // Default to empty array if null/undefined
+                    correctAnswerIndex: correctAnswerIndexPlaceholder,
+                    isCorrect: isCorrectPlaceholder,
+                };
+            })
+          );
+        }
+        return sectionResult;
+      })
+    );
+    // --------------------------------------
 
-    // Delete the original raw answers string from the result object
-    delete resultData.answers; 
+    // Construct the final response object
+    const responseData: TestAttemptResult = {
+      id: testAttempt.id,
+      completedAt: testAttempt.completedAt.toISOString(),
+      sections: formattedSections,
+      // TODO: Add overallScore if calculated during completion/saved
+      // overallScore: testAttempt.overallScore 
+    };
 
-    // Add the new detailedAnswers array to the result object
-    resultData.detailedAnswers = detailedAnswers;
-
-    return new NextResponse(JSON.stringify(resultData), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    console.log(`Results API: Returning structured data for attemptId: ${params.attemptId}`);
+    return NextResponse.json(responseData);
 
   } catch (error) {
-    console.error('Error fetching test results:', error);
-    // Check if the error is due to JSON parsing
-    if (error instanceof SyntaxError) {
-      return new NextResponse(JSON.stringify({ error: 'Error parsing stored answers' }), { status: 500 });
-    }
-    return new NextResponse(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
+    console.error('Results API: Server error:', error);
+    return new NextResponse(
+      JSON.stringify({ error: 'שגיאת שרת פנימית' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
   } finally {
     await prisma.$disconnect();
   }
