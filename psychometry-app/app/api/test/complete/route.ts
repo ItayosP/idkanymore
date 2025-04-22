@@ -28,13 +28,16 @@ export async function POST(request: Request) {
         timeSpent: answer.timeSpent
       }));
 
+      // Calculate score for single section
+      const score = calculateScore(formattedAnswers);
+
       // Create a test attempt with the standardized structure
       const testAttempt = await prisma.testAttempt.create({
         data: {
           userId: userId,
           section: testType,
-          score: calculateScore(formattedAnswers),
-          answers: JSON.stringify(formattedAnswers), // Save just the answers array
+          score: score,
+          answers: JSON.stringify(formattedAnswers),
           timeSpent: overallTimeSpent || 0,
           completedAt: new Date(),
           testType: testType
@@ -51,12 +54,27 @@ export async function POST(request: Request) {
       );
     }
 
-    // Full test handling remains the same
+    // Full test handling
+    // Calculate scores for each section
+    const sectionScores = sections.map((section: { type: string; answers: any[] }) => {
+      if (section.type === 'essay') return 0; // Essay score is calculated separately
+      const formattedAnswers = section.answers.map((answer: any) => ({
+        questionId: answer.questionId,
+        selectedAnswerIndex: answer.selectedAnswer,
+        isCorrect: answer.isCorrect,
+        timeSpent: answer.timeSpent
+      }));
+      return calculateScore(formattedAnswers);
+    });
+
+    // Calculate overall score (excluding essay for now)
+    const overallScore = sectionScores.reduce((sum: number, score: number) => sum + score, 0) / sectionScores.length;
+
     const testAttempt = await prisma.testAttempt.create({
       data: {
         userId: userId,
         section: 'full_test',
-        score: 0, // Placeholder score - needs calculation
+        score: overallScore,
         answers: JSON.stringify(sections),
         essayContent: essayContent,
         timeSpent: overallTimeSpent || 0,
@@ -65,7 +83,7 @@ export async function POST(request: Request) {
       },
     });
 
-    console.log('Test Completion API: Full Test attempt saved');
+    console.log('Test Completion API: Full Test attempt saved with score:', overallScore);
     return new NextResponse(
       JSON.stringify({ 
         success: true, 
