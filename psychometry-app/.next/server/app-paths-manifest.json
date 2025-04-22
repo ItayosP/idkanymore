@@ -1,7 +1,9 @@
 {
-  "/tests/verbal/page": "app/tests/verbal/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/results/[attemptId]/page": "app/results/[attemptId]/page.js",
   "/tests/quantitative/page": "app/tests/quantitative/page.js",
   "/tests/english/page": "app/tests/english/page.js",
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/tests/page": "app/tests/page.js",
   "/tests/full/page": "app/tests/full/page.js"
 }
