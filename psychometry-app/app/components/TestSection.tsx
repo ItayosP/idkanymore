@@ -158,6 +158,9 @@ const TestSection: React.FC<TestSectionProps> = ({
       return <div>Loading questions or no questions available...</div>; // TODO: Improve this state
   }
 
+  // Ensure options is an array
+  const options = Array.isArray(currentQuestion.options) ? currentQuestion.options : [];
+
   return (
     <div dir="rtl" className="space-y-6 p-4 md:p-6 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow-md">
       <div className="flex justify-between items-center border-b dark:border-gray-700 pb-3 mb-4">
@@ -187,7 +190,7 @@ const TestSection: React.FC<TestSectionProps> = ({
 
       {/* Answer Options */}
       <div className="space-y-3">
-        {currentQuestion.options.map((option, index) => (
+        {options.map((option, index) => (
           <button
             key={index}
             onClick={() => handleAnswerSelect(currentQuestion.id, index)}

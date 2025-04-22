@@ -381,31 +381,74 @@ const englishQuestions: Question[] = [
 ];
 
 export async function GET(request: Request) {
-  console.log('Questions API: Received request');
-  const { searchParams } = new URL(request.url);
-  const type = searchParams.get('type');
-  console.log('Questions API: Request type:', type);
+  try {
+    const { searchParams } = new URL(request.url);
+    const type = searchParams.get('type');
+    
+    if (!type) {
+      return NextResponse.json({ error: 'Type parameter is required' }, { status: 400 });
+    }
 
-  let questions: Question[] = [];
+    // Get questions from the database
+    const questions = await prisma.question.findMany({
+      where: {
+        section: type
+      },
+      select: {
+        id: true,
+        content: true,
+        options: true,
+        correctAnswer: true,
+        section: true,
+        difficulty: true,
+        createdAt: true,
+        updatedAt: true
+      },
+      orderBy: {
+        id: 'asc'
+      }
+    });
 
-  switch (type) {
-    case 'verbal':
-      console.log('Questions API: Returning verbal questions');
-      questions = verbalQuestions;
-      break;
-    case 'quantitative':
-      console.log('Questions API: Returning quantitative questions');
-      questions = quantitativeQuestions;
-      break;
-    case 'english':
-      console.log('Questions API: Returning english questions');
-      questions = englishQuestions;
-      break;
-    default:
-      console.error('Questions API: Invalid question type:', type);
-      return NextResponse.json({ error: 'Invalid question type' }, { status: 400 });
+    if (!questions || questions.length === 0) {
+      // If no questions in database, return dummy questions based on type
+      let dummyQuestions;
+      switch (type) {
+        case 'verbal':
+          dummyQuestions = verbalQuestions;
+          break;
+        case 'quantitative':
+          dummyQuestions = quantitativeQuestions;
+          break;
+        case 'english':
+          dummyQuestions = englishQuestions;
+          break;
+        case 'pilot':
+          // Return some dummy pilot questions
+          dummyQuestions = quantitativeQuestions.slice(0, 5).map(q => ({
+            ...q,
+            section: 'pilot'
+          }));
+          break;
+        default:
+          return NextResponse.json({ error: 'No questions found for this section' }, { status: 404 });
+      }
+      console.log(`Returning ${dummyQuestions.length} dummy questions for ${type} section`);
+      return NextResponse.json(dummyQuestions);
+    }
+
+    // Format database questions to match expected structure
+    const formattedQuestions = questions.map(q => ({
+      id: q.id,
+      text: q.content, // Map content to text for frontend compatibility
+      options: typeof q.options === 'string' ? JSON.parse(q.options) : q.options,
+      correctAnswer: q.correctAnswer,
+      difficulty: q.difficulty
+    }));
+
+    console.log(`Returning ${formattedQuestions.length} questions for ${type} section`);
+    return NextResponse.json(formattedQuestions);
+  } catch (error) {
+    console.error('Error fetching questions:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
-
-  console.log('Questions API: Returning', questions.length, 'questions');
-  return NextResponse.json(questions);
 } 

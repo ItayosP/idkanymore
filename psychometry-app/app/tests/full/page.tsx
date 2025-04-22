@@ -11,6 +11,8 @@ interface Question {
   text: string;
   passage?: string;
   options: string[];
+  correctAnswer: string;
+  explanation: string;
 }
 
 interface SectionDefinition {
@@ -102,21 +104,56 @@ export default function FullTestPage() {
       setIsLoading(true);
       console.log(`Fetching questions for ${section.type} section (index ${sectionIndex})...`);
       try {
-        // TODO: Replace with actual API call
-        // Example: const response = await fetch(`/api/questions?section=${section.type}&count=20`);
-        // const data = await response.json();
-        // Simulate API call delay and dummy data
-        await new Promise(resolve => setTimeout(resolve, 500)); 
-        const dummyQuestions: Question[] = Array.from({ length: 1 }, (_, i) => ({
-            id: `${section.type}-${sectionIndex}-${i + 1}`,
-            text: `זוהי שאלה מספר ${i + 1} מפרק ${section.type} (מדד ${sectionIndex}). ${section.type === 'pilot' ? '(פיילוט)': ''}`,
-            options: ['תשובה 1', 'תשובה 2', 'תשובה 3', 'תשובה 4']
-        }));
+        const response = await fetch(`/api/questions?type=${section.type}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch questions: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("Raw questions data:", data);
         
-        setSectionQuestions(prev => ({ ...prev, [sectionIndex]: dummyQuestions }));
+        if (!Array.isArray(data) || data.length === 0) {
+          throw new Error('No questions received from the server');
+        }
+        
+        // Transform the questions to match the expected format
+        const formattedQuestions: Question[] = data.map((q: any) => {
+          // Ensure we have a valid question object
+          if (!q) {
+            console.error('Invalid question object:', q);
+            return null;
+          }
+
+          // Parse options if they're stored as a string
+          let parsedOptions = [];
+          try {
+            parsedOptions = typeof q.options === 'string' ? JSON.parse(q.options) : q.options;
+          } catch (e) {
+            console.error('Error parsing options for question', q.id, e);
+            parsedOptions = ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
+          }
+
+          // Create formatted question
+          const formattedQuestion = {
+            id: q.id?.toString() || '',
+            text: q.text || q.content || `Question ${q.id}`, // Try both text and content fields
+            passage: q.passage || undefined,
+            options: Array.isArray(parsedOptions) ? parsedOptions : ['Option 1', 'Option 2', 'Option 3', 'Option 4'],
+            correctAnswer: typeof q.correctAnswer === 'number' ? q.correctAnswer : 0
+          };
+
+          console.log('Formatted question:', formattedQuestion);
+          return formattedQuestion;
+        }).filter(Boolean); // Remove any null values
+
+        if (formattedQuestions.length === 0) {
+          throw new Error('No valid questions could be formatted');
+        }
+
+        console.log(`Formatted ${formattedQuestions.length} questions for section ${section.type}`);
+        setSectionQuestions(prev => ({ ...prev, [sectionIndex]: formattedQuestions }));
       } catch (error) {
         console.error("Error fetching questions:", error);
-        // TODO: Handle fetch error state
+        setSubmissionError(error instanceof Error ? error.message : 'שגיאה לא ידועה בטעינת השאלות');
       } finally {
         setIsLoading(false);
       }

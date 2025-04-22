@@ -428,41 +428,81 @@ interface TestAttemptResult {
 // ---------------------------------------------
 
 // --- Updated getQuestionDetails to use hardcoded data ---
-async function getQuestionDetails(questionId: string): Promise<Question | null> {
+async function getQuestionDetails(questionId: string, sectionType?: string): Promise<Question | null> {
     console.log(`Fetching details for question ID: ${questionId} (type: ${typeof questionId})`);
     
-    // Expected format: type-sectionIndex-originalId (e.g., quantitative-1-1)
+    // First try to find the question directly in the database
+    try {
+        const question = await prisma.question.findUnique({
+            where: { id: questionId }
+        });
+
+        if (question) {
+            return {
+                id: question.id,
+                text: question.content,
+                options: typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
+                correctAnswer: question.correctAnswer,
+                explanation: '' // Add explanation if available in the database
+            };
+        }
+    } catch (error) {
+        console.warn(`Error fetching question from database: ${error}`);
+    }
+
+    // If not found in database and we have a section type, try to find it in the hardcoded questions
+    if (sectionType) {
+        const allQuestionsData = await getAllQuestions();
+        const sectionQuestions = allQuestionsData[sectionType];
+
+        if (!sectionQuestions) {
+            console.warn(`No hardcoded questions found for section type: ${sectionType}`);
+            return null;
+        }
+
+        // Try to find the question by numeric ID
+        const numericId = parseInt(questionId, 10);
+        if (!isNaN(numericId)) {
+            const foundQuestion = sectionQuestions.find(q => q.id === numericId);
+            if (foundQuestion) {
+                console.log(`Found details for question ID: ${questionId} in section ${sectionType}`);
+                return foundQuestion;
+            }
+        }
+    }
+
+    // If not found in database or hardcoded questions, try the old format parsing
     const parts = questionId.split('-');
-    if (parts.length < 3) {
-        console.warn(`Invalid question ID format: ${questionId}`);
-        return null;
+    if (parts.length >= 3) {
+        const sectionType = parts[0]; // e.g., 'quantitative'
+        const originalId = parseInt(parts[2], 10); // Get the last part as number
+
+        if (isNaN(originalId)) {
+            console.warn(`Could not parse original ID number from: ${questionId}`);
+            return null;
+        }
+
+        const allQuestionsData = await getAllQuestions();
+        const sectionQuestions = allQuestionsData[sectionType];
+
+        if (!sectionQuestions) {
+            console.warn(`No hardcoded questions found for section type: ${sectionType}`);
+            return null;
+        }
+
+        // Find the question in the specific section array using the parsed original numeric ID
+        const foundQuestion = sectionQuestions.find(q => q.id === originalId);
+
+        if (!foundQuestion) {
+            console.warn(`Question details not found for type ${sectionType} and original ID ${originalId}`);
+            return null;
+        }
+        console.log(`Found details for question ID: ${questionId} (Original ID: ${originalId})`);
+        return foundQuestion;
     }
-    
-    const sectionType = parts[0]; // e.g., 'quantitative'
-    const originalId = parseInt(parts[2], 10); // Get the last part as number
 
-    if (isNaN(originalId)) {
-         console.warn(`Could not parse original ID number from: ${questionId}`);
-         return null;
-    }
-
-    const allQuestionsData = await getAllQuestions();
-    const sectionQuestions = allQuestionsData[sectionType];
-
-    if (!sectionQuestions) {
-        console.warn(`No hardcoded questions found for section type: ${sectionType}`);
-        return null;
-    }
-
-    // Find the question in the specific section array using the parsed original numeric ID
-    const foundQuestion = sectionQuestions.find(q => q.id === originalId);
-
-    if (!foundQuestion) {
-        console.warn(`Question details not found for type ${sectionType} and original ID ${originalId}`);
-        return null;
-    }
-    console.log(`Found details for question ID: ${questionId} (Original ID: ${originalId})`);
-    return foundQuestion;
+    console.warn(`Invalid question ID format: ${questionId}`);
+    return null;
 }
 // -------------------------------------------------------
 
@@ -541,7 +581,7 @@ export async function GET(
         } else if (Array.isArray(sectionData.answers)) {
             // Process all answers in parallel for better performance
             const answersPromises = sectionData.answers.map(async (ans: any): Promise<AnswerDetail> => {
-                const questionDetails = await getQuestionDetails(ans.questionId);
+                const questionDetails = await getQuestionDetails(ans.questionId, sectionData.type);
                 
                 // Calculate isCorrect by comparing selected answer with correct answer
                 const isCorrect = ans.selectedAnswerIndex === questionDetails?.correctAnswer;

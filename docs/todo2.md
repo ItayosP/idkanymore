@@ -4,18 +4,17 @@ This list outlines the development tasks required to implement the full psychome
 
 ## General Features
 
-- [ ] Implement a "Full Test" mode that includes Verbal, Quantitative, and English sections.
-- [ ] Implement a standalone "Essay Task" (מטלת כתיבה) mode.
-- [ ] In the "Full Test" mode, add an option for the user to choose whether the essay task is performed before or after the multiple-choice sections.
+- [X] Implement a "Full Test" mode that includes Verbal, Quantitative, and English sections.
+- [X] Implement a standalone "Essay Task" (מטלת כתיבה) mode.
+- [X] In the "Full Test" mode, add an option for the user to choose whether the essay task is performed before or after the multiple-choice sections.
 
 ## Essay Task (מטלת כתיבה)
 
-- [ ] Create a dedicated UI for the essay task.
-- [ ] Display the specific essay prompt from `spec2.md` (or similar prompts).
-- [ ] Provide a text area for the user to write their essay.
-- [ ] Implement a 30-minute timer specifically for the essay task.
-- [ ] Implement functionality to save the user's essay text.
-- [ ] (Optional) Add display for required line count (25-50) and potentially a running count.
+- [X] Create a dedicated UI for the essay task.
+- [X] Display the specific essay prompt from `spec2.md` (or similar prompts).
+- [X] Provide a text area for the user to write their essay.
+- [X] Implement a 30-minute timer specifically for the essay task.
+- [X] Implement functionality to save the user's essay text.
 
 ## Verbal Reasoning Section (חשיבה מילולית)
 
