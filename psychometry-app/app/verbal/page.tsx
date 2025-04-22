@@ -107,10 +107,20 @@ export default function VerbalTest() {
 
     setIsSubmitting(true);
     try {
-      // Calculate score
-      const score = questions.reduce((total, question, index) => {
-        return total + (answers[index].isCorrect ? 1 : 0);
-      }, 0) * 10; // Convert to percentage
+      const testResult = {
+        testType: 'verbal',
+        sections: [{
+          type: 'verbal',
+          isPilot: false,
+          answers: answers.map(answer => ({
+            questionId: answer.questionId.toString(),
+            selectedAnswer: answer.selectedAnswer,
+            isCorrect: answer.isCorrect,
+            timeSpent: 0 // TODO: Implement time tracking if needed
+          }))
+        }],
+        overallTimeSpent: 0 // TODO: Implement time tracking if needed
+      };
 
       // Save test attempt
       const response = await fetch('/api/test/complete', {
@@ -119,15 +129,7 @@ export default function VerbalTest() {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify({
-          section: 'verbal',
-          score,
-          answers: answers.map(answer => ({
-            questionId: answer.questionId,
-            answer: answer.selectedAnswer,
-            isCorrect: answer.isCorrect
-          }))
-        }),
+        body: JSON.stringify(testResult),
       });
 
       if (!response.ok) {
@@ -136,7 +138,7 @@ export default function VerbalTest() {
       }
 
       const data = await response.json();
-      setScore(score);
+      setScore(calculateScore(answers));
       setShowResults(true);
       setError('');
     } catch (err) {
@@ -145,6 +147,12 @@ export default function VerbalTest() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Helper function to calculate score
+  const calculateScore = (answers: any[]): number => {
+    const correctAnswers = answers.filter(answer => answer.isCorrect).length;
+    return (correctAnswers / questions.length) * 100;
   };
 
   if (loading) {

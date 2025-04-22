@@ -15,97 +15,64 @@ export async function POST(request: Request) {
     const userId = session.user.id;
     console.log('Authenticated User ID from session:', userId);
 
-    // --- MODIFIED FOR FULL TEST --- 
-    // Expecting a different body structure for full tests
-    const { testType, sections, essayContent, overallTimeSpent } = await request.json(); 
+    const { testType, sections, essayContent, overallTimeSpent } = await request.json();
     console.log('Request Body:', { testType, sections, essayContent, overallTimeSpent });
 
-    if (testType === 'full') {
-        // TODO: Implement full test saving logic
-        // 1. Validate the structure of 'sections' array
-        // 2. Calculate scores for each non-pilot MC section
-        // 3. Calculate weighted verbal score including essay (requires scoring logic for essay)
-        // 4. Calculate overall score (if applicable based on spec)
-        // 5. Update Prisma schema for TestAttempt to store:
-        //    - testType ('full', 'verbal', etc.)
-        //    - essayContent (string/text)
-        //    - structured answers (e.g., JSON containing answers per section, pilot status, section scores)
-        //    - overallScore, verbalScore, quantScore, englishScore
-        // 6. Create ONE TestAttempt record for the entire full test.
+    // For single section tests, convert the data to match the full test structure
+    if (testType !== 'full') {
+      // Convert single section data to match the structure expected by the results API
+      const formattedAnswers = sections[0].answers.map((answer: any) => ({
+        questionId: answer.questionId,
+        selectedAnswerIndex: answer.selectedAnswer,
+        isCorrect: answer.isCorrect,
+        timeSpent: answer.timeSpent
+      }));
 
-        console.warn("Full test saving logic not fully implemented in backend!");
-        
-        // Placeholder: Save a basic attempt record (Needs schema update)
-        const testAttempt = await prisma.testAttempt.create({
-          data: {
-            userId: userId,
-            section: 'full_test', // Indicate it's a full test
-            score: 0, // Placeholder score - needs calculation
-            answers: JSON.stringify(sections), // Store section answers (structure needs finalization)
-            essayContent: essayContent, // <<< Save the essay content (Requires DB schema change!)
-            timeSpent: overallTimeSpent || 0,
-            completedAt: new Date(),
-            testType: testType // <<< Added missing field
-          },
-        });
-
-        console.log('Test Completion API: Placeholder Full Test attempt saved');
-        return new NextResponse(
-          JSON.stringify({ 
-            success: true, 
-            attemptId: testAttempt.id // Return the ID of the saved full test attempt
-          }),
-          { status: 200, headers: { 'Content-Type': 'application/json' } }
-        );
-
-    } else {
-      // --- Existing Single Section Logic --- 
-      // Assuming body contains { section, answers, timeSpent } for single sections
-      const { section, answers, timeSpent } = { testType, sections, overallTimeSpent }; // Reinterpret if needed or keep separate handling
-
-      // TODO: Refactor single section logic if endpoint handles both
-      // The existing calculation might need adjustment depending on `answers` structure now
-      const correctAnswers = answers.filter((answer: any) => answer.isCorrect).length;
-      const totalQuestions = answers.length;
-      const accuracyScore = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0;
-      
-      const maxTimePerQuestion = 120; 
-      const totalMaxTime = maxTimePerQuestion * totalQuestions;
-      const timingScore = totalMaxTime > 0 ? Math.max(0, 100 - ((timeSpent / totalMaxTime) * 100)) : 100;
-      
-      const finalScore = (accuracyScore * 0.8) + (timingScore * 0.2);
-
+      // Create a test attempt with the standardized structure
       const testAttempt = await prisma.testAttempt.create({
         data: {
           userId: userId,
-          section: section, // Use the single section name
-          score: finalScore,
-          answers: JSON.stringify(answers),
-          timeSpent,
+          section: testType,
+          score: calculateScore(formattedAnswers),
+          answers: JSON.stringify(formattedAnswers), // Save just the answers array
+          timeSpent: overallTimeSpent || 0,
           completedAt: new Date(),
-          testType: testType // <<< Add testType here as well
+          testType: testType
         },
       });
-      
-      // Calculate progress (remains the same for single section)
-      // ... (progress calculation logic as before)
 
       console.log('Test Completion API: Single Section attempt saved successfully');
       return new NextResponse(
-        JSON.stringify({
-          success: true,
-          attemptId: testAttempt.id, // Return the ID
-          // progress: averageScore, // Progress might be removed or recalculated
-          score: finalScore,
-          // accuracy: accuracyScore,
-          // timing: timingScore
+        JSON.stringify({ 
+          success: true, 
+          attemptId: testAttempt.id
         }),
-        { 
-          status: 200,
-          headers: { 'Content-Type': 'application/json' }
-        }
+        { status: 200, headers: { 'Content-Type': 'application/json' } }
       );
     }
+
+    // Full test handling remains the same
+    const testAttempt = await prisma.testAttempt.create({
+      data: {
+        userId: userId,
+        section: 'full_test',
+        score: 0, // Placeholder score - needs calculation
+        answers: JSON.stringify(sections),
+        essayContent: essayContent,
+        timeSpent: overallTimeSpent || 0,
+        completedAt: new Date(),
+        testType: testType
+      },
+    });
+
+    console.log('Test Completion API: Full Test attempt saved');
+    return new NextResponse(
+      JSON.stringify({ 
+        success: true, 
+        attemptId: testAttempt.id
+      }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
+    );
 
   } catch (error) {
     console.error('Test Completion API: Server error:', error);
@@ -117,4 +84,18 @@ export async function POST(request: Request) {
       }
     );
   }
+}
+
+// Helper function to calculate score
+function calculateScore(answers: any[]): number {
+  const correctAnswers = answers.filter((answer: any) => answer.isCorrect).length;
+  const totalQuestions = answers.length;
+  const accuracyScore = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0;
+  
+  const maxTimePerQuestion = 120;
+  const totalMaxTime = maxTimePerQuestion * totalQuestions;
+  const totalTimeSpent = answers.reduce((sum, answer) => sum + (answer.timeSpent || 0), 0);
+  const timingScore = totalMaxTime > 0 ? Math.max(0, 100 - ((totalTimeSpent / totalMaxTime) * 100)) : 100;
+  
+  return (accuracyScore * 0.8) + (timingScore * 0.2);
 } 

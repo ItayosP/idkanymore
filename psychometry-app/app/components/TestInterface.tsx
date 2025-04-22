@@ -115,14 +115,18 @@ export default function TestInterface({ section, subcategory, isFullTest = false
     const totalTimeSpent = Math.floor((endTime - startTime) / 1000); // Convert to seconds
     
     const testResult = {
-      section: section,
-      answers: questions.map((question, index) => ({
-        questionId: question.id.toString(),
-        selectedAnswer: userAnswers[index],
-        isCorrect: userAnswers[index] === question.correctAnswer,
-        timeSpent: Math.floor(totalTimeSpent / questions.length) // Average time per question
-      })),
-      timeSpent: totalTimeSpent
+      testType: section,
+      sections: [{
+        type: section,
+        isPilot: false,
+        answers: questions.map((question, index) => ({
+          questionId: question.id.toString(),
+          selectedAnswer: userAnswers[index],
+          isCorrect: userAnswers[index] === question.correctAnswer,
+          timeSpent: Math.floor(totalTimeSpent / questions.length) // Average time per question
+        }))
+      }],
+      overallTimeSpent: totalTimeSpent
     };
 
     try {
@@ -139,7 +143,7 @@ export default function TestInterface({ section, subcategory, isFullTest = false
         const data = await response.json();
         console.log("[handleFinishTest] API call successful, result:", data);
         if (data.attemptId) {
-          router.push(`/results?attemptId=${data.attemptId}`);
+          router.push(`/results/${data.attemptId}`);
         } else {
           console.error('Error: attemptId not found in API response');
           setError('שגיאה בהצגת התוצאות.');

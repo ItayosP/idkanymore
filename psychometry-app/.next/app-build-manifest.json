@@ -1,9 +1,9 @@
 {
   "pages": {
-    "/profile/page": [
+    "/results/[attemptId]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/profile/page.js"
+      "static/chunks/app/results/[attemptId]/page.js"
     ],
     "/layout": [
       "static/chunks/webpack.js",
@@ -16,50 +16,35 @@
       "static/chunks/main-app.js",
       "static/chunks/app/dashboard/page.js"
     ],
-    "/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
-    ],
     "/tests/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/tests/page.js"
-    ],
-    "/register/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/register/page.js"
-    ],
-    "/login/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/login/page.js"
-    ],
-    "/tests/verbal/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/tests/verbal/page.js"
-    ],
-    "/results/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/results/page.js"
     ],
     "/tests/full/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/tests/full/page.js"
     ],
-    "/results/completed/page": [
+    "/tests/verbal/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/results/completed/page.js"
+      "static/chunks/app/tests/verbal/page.js"
     ],
-    "/results/[attemptId]/page": [
+    "/profile/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/results/[attemptId]/page.js"
+      "static/chunks/app/profile/page.js"
+    ],
+    "/tests/quantitative/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/tests/quantitative/page.js"
+    ],
+    "/tests/english/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/tests/english/page.js"
     ]
   }
 }

@@ -439,9 +439,9 @@ async function getQuestionDetails(questionId: string): Promise<Question | null> 
     }
     
     const sectionType = parts[0]; // e.g., 'quantitative'
-    const originalIdNum = parseInt(parts[parts.length - 1], 10); // Get the last part as number
+    const originalId = parseInt(parts[2], 10); // Get the last part as number
 
-    if (isNaN(originalIdNum)) {
+    if (isNaN(originalId)) {
          console.warn(`Could not parse original ID number from: ${questionId}`);
          return null;
     }
@@ -455,13 +455,13 @@ async function getQuestionDetails(questionId: string): Promise<Question | null> 
     }
 
     // Find the question in the specific section array using the parsed original numeric ID
-    const foundQuestion = sectionQuestions.find(q => q.id === originalIdNum);
+    const foundQuestion = sectionQuestions.find(q => q.id === originalId);
 
     if (!foundQuestion) {
-        console.warn(`Question details not found for type ${sectionType} and original ID ${originalIdNum}`);
+        console.warn(`Question details not found for type ${sectionType} and original ID ${originalId}`);
         return null;
     }
-    console.log(`Found details for question ID: ${questionId} (Original ID: ${originalIdNum})`);
+    console.log(`Found details for question ID: ${questionId} (Original ID: ${originalId})`);
     return foundQuestion;
 }
 // -------------------------------------------------------
@@ -496,19 +496,30 @@ export async function GET(
 
     try {
         if (testAttempt.answers) {
-            // Assuming testAttempt.answers stores the JSON string of SectionSubmissionData[] for full tests
-            // For single sections, it might store a different structure - needs handling if this route serves both.
             if (testAttempt.section === 'full_test') { 
                 parsedSectionsData = JSON.parse(testAttempt.answers);
             } else {
-                // Handle single section attempts if needed - adapt structure
-                console.warn(`Attempt ${params.attemptId} is not a full test, parsing might be incorrect.`);
-                // Try parsing as single section answer array? Depends on what's saved.
-                // parsedSectionsData = [{ sectionType: testAttempt.section, isPilot: false, answers: JSON.parse(testAttempt.answers) }]; // Example
+                // Handle single section attempts
+                const answers = JSON.parse(testAttempt.answers);
+                console.log('Parsed answers from DB:', answers);
+                
+                // Calculate score based on correct answers
+                const correctAnswers = answers.filter((ans: any) => ans.isCorrect).length;
+                const score = (correctAnswers / answers.length) * 100;
+                
+                parsedSectionsData = [{
+                    type: testAttempt.section,
+                    isPilot: false,
+                    score: score,
+                    answers: answers.map((ans: any) => ({
+                        ...ans,
+                        questionId: `${testAttempt.section}-1-${ans.questionId}`,
+                    }))
+                }];
+
+                console.log('Formatted section data:', parsedSectionsData);
             }
         }
-        // TODO: Retrieve actual essay content if schema was updated
-        // essayContentFromDb = testAttempt.essayContent; 
     } catch (e) {
       console.error("Error parsing test attempt answers:", e);
       return new NextResponse(JSON.stringify({ error: 'Failed to parse result data' }), { status: 500 });
@@ -520,33 +531,30 @@ export async function GET(
         const sectionResult: SectionResult = {
             sectionType: sectionData.type,
             isPilot: sectionData.isPilot,
-            score: sectionData.score, // Pass score if calculated and saved during completion
+            score: sectionData.score,
             answers: [],
             essayContent: undefined,
         };
 
         if (sectionData.type === 'essay') {
-             // Use the content fetched directly from the DB record
              sectionResult.essayContent = essayContentFromDb ?? "(שגיאה בטעינת תוכן חיבור)"; 
         } else if (Array.isArray(sectionData.answers)) {
-            sectionResult.answers = await Promise.all(
-                sectionData.answers.map(async (ans: any): Promise<AnswerDetail> => {
-                const questionDetails = await getQuestionDetails(ans.questionId); // Use the updated function
+            // Process all answers in parallel for better performance
+            const answersPromises = sectionData.answers.map(async (ans: any): Promise<AnswerDetail> => {
+                const questionDetails = await getQuestionDetails(ans.questionId);
                 
-                // Calculate correctness based on fetched details
-                const correctAnswerIndex = questionDetails?.correctAnswer; // Get correct index from data
-                const isCorrect = (correctAnswerIndex !== undefined && ans.selectedAnswerIndex === correctAnswerIndex);
-
                 return {
                     questionId: ans.questionId,
                     selectedAnswerIndex: ans.selectedAnswerIndex,
                     questionText: questionDetails?.text ?? `טקסט שאלה חסר (ID: ${ans.questionId})`,
                     options: questionDetails?.options ?? [],
-                    correctAnswerIndex: correctAnswerIndex, // Use the fetched correct index
-                    isCorrect: isCorrect, // Use the calculated correctness
+                    correctAnswerIndex: questionDetails?.correctAnswer,
+                    isCorrect: ans.isCorrect
                 };
-            })
-          );
+            });
+            
+            sectionResult.answers = await Promise.all(answersPromises);
+            console.log('Processed answers:', sectionResult.answers);
         }
         return sectionResult;
       })
