@@ -31,14 +31,14 @@ model Progress {
 }
 
 model Question {
-  id          String   @id @default(cuid())
-  content     String
-  options     String   // JSON string of answer options
-  correctAnswer Int    // Index of correct answer
-  section     String   // verbal, quantitative, english
-  difficulty  Int      // 1-5
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String   @id @default(cuid())
+  content       String
+  options       String   // JSON string of answer options
+  correctAnswer String   // The actual correct answer text
+  section       String   // verbal, quantitative, english
+  difficulty    String   // easy, medium, hard, very_hard
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model TestAttempt {

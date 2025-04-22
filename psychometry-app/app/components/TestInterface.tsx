@@ -3,8 +3,17 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Question } from '@prisma/client'; // Corrected import path for Prisma types
-import WritingTaskInterface from './WritingTaskInterface'; // Import the WritingTaskInterface
+import { Question } from '@prisma/client';
+import WritingTaskInterface from './WritingTaskInterface';
+
+interface Question {
+  id: string;
+  content: string;
+  options: string[];
+  correctAnswer: string;
+  section: string;
+  difficulty: string;
+}
 
 interface TestInterfaceProps {
   section: 'verbal' | 'quantitative' | 'english' | 'hebrew';
@@ -127,6 +136,10 @@ export default function TestInterface({ section, subcategory, isFullTest = false
     const newAnswers = [...userAnswers];
     newAnswers[currentQuestionIndex] = index;
     setUserAnswers(newAnswers);
+    
+    // Check if the selected answer is correct
+    const isCorrect = currentQuestion.options[index] === currentQuestion.correctAnswer;
+    console.log('Selected answer:', currentQuestion.options[index], 'Correct answer:', currentQuestion.correctAnswer, 'Is correct:', isCorrect);
   };
 
   const handleNextQuestion = () => {
@@ -154,15 +167,20 @@ export default function TestInterface({ section, subcategory, isFullTest = false
       sections: [{
         type: section,
         isPilot: false,
-        answers: questions.map((question, index) => ({
-          questionId: question.id.toString(),
-          selectedAnswer: userAnswers[index],
-          isCorrect: userAnswers[index] === question.correctAnswer,
-          timeSpent: Math.floor(totalTimeSpent / questions.length)
-        }))
+        answers: questions.map((question, index) => {
+          const selectedIndex = userAnswers[index];
+          console.log(`Preparing QID: ${question.id}, Stored Index: ${selectedIndex} (Type: ${typeof selectedIndex})`);
+          return {
+            questionId: question.id,
+            selectedAnswer: selectedIndex,
+            timeSpent: Math.floor(totalTimeSpent / questions.length)
+          };
+        })
       }],
       overallTimeSpent: totalTimeSpent
     };
+
+    console.log('Submitting Test Result Payload (TestInterface):', JSON.stringify(testResult, null, 2));
 
     try {
       const response = await fetch('/api/test/complete', {
@@ -322,7 +340,7 @@ export default function TestInterface({ section, subcategory, isFullTest = false
 
           <div className="mb-6">
             <p className="text-lg text-gray-900 dark:text-white mb-4">
-              {currentQuestion.text}
+              {currentQuestion.content}
             </p>
           </div>
 

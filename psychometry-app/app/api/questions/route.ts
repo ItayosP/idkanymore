@@ -384,71 +384,108 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type');
-    
-    if (!type) {
-      return NextResponse.json({ error: 'Type parameter is required' }, { status: 400 });
+
+    let where = {};
+    if (type) {
+      where = { section: type };
     }
 
-    // Get questions from the database
     const questions = await prisma.question.findMany({
-      where: {
-        section: type
-      },
-      select: {
-        id: true,
-        content: true,
-        options: true,
-        correctAnswer: true,
-        section: true,
-        difficulty: true,
-        createdAt: true,
-        updatedAt: true
-      },
+      where,
       orderBy: {
-        id: 'asc'
+        createdAt: 'desc'
       }
     });
 
-    if (!questions || questions.length === 0) {
-      // If no questions in database, return dummy questions based on type
-      let dummyQuestions;
-      switch (type) {
-        case 'verbal':
-          dummyQuestions = verbalQuestions;
-          break;
-        case 'quantitative':
-          dummyQuestions = quantitativeQuestions;
-          break;
-        case 'english':
-          dummyQuestions = englishQuestions;
-          break;
-        case 'pilot':
-          // Return some dummy pilot questions
-          dummyQuestions = quantitativeQuestions.slice(0, 5).map(q => ({
-            ...q,
-            section: 'pilot'
-          }));
-          break;
-        default:
-          return NextResponse.json({ error: 'No questions found for this section' }, { status: 404 });
-      }
-      console.log(`Returning ${dummyQuestions.length} dummy questions for ${type} section`);
-      return NextResponse.json(dummyQuestions);
-    }
-
-    // Format database questions to match expected structure
-    const formattedQuestions = questions.map(q => ({
-      id: q.id,
-      text: q.content, // Map content to text for frontend compatibility
-      options: typeof q.options === 'string' ? JSON.parse(q.options) : q.options,
-      correctAnswer: q.correctAnswer,
-      difficulty: q.difficulty
+    // Parse options from JSON string
+    const parsedQuestions = questions.map(question => ({
+      ...question,
+      options: JSON.parse(question.options),
+      correctAnswer: question.correctAnswer
     }));
 
-    console.log(`Returning ${formattedQuestions.length} questions for ${type} section`);
-    return NextResponse.json(formattedQuestions);
+    return NextResponse.json(parsedQuestions);
   } catch (error) {
     console.error('Error fetching questions:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch questions' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const { content, options, correctAnswer, section, difficulty } = body;
+
+    // Validate required fields
+    if (!content || !options || !correctAnswer || !section || !difficulty) {
+      return NextResponse.json(
+        { error: 'All fields are required' },
+        { status: 400 }
+      );
+    }
+
+    // Validate options array
+    if (!Array.isArray(options) || options.length !== 4) {
+      return NextResponse.json(
+        { error: 'Exactly 4 options are required' },
+        { status: 400 }
+      );
+    }
+
+    // Find the index of the correct answer
+    const correctAnswerIndex = options.indexOf(correctAnswer);
+    if (correctAnswerIndex === -1) {
+      return NextResponse.json(
+        { error: 'Correct answer must be one of the provided options' },
+        { status: 400 }
+      );
+    }
+
+    // Validate section
+    const validSections = ['verbal', 'quantitative', 'english'];
+    if (!validSections.includes(section)) {
+      return NextResponse.json(
+        { error: 'Invalid section' },
+        { status: 400 }
+      );
+    }
+
+    // Convert difficulty to integer
+    const difficultyMap: Record<string, number> = {
+      'easy': 1,
+      'medium': 2,
+      'hard': 3,
+      'very_hard': 4
+    };
+
+    const difficultyLevel = difficultyMap[difficulty];
+    if (!difficultyLevel) {
+      return NextResponse.json(
+        { error: 'Invalid difficulty level' },
+        { status: 400 }
+      );
+    }
+
+    // Create the question
+    const question = await prisma.question.create({
+      data: {
+        content,
+        options: JSON.stringify(options),
+        correctAnswer: correctAnswerIndex, // Store the index as integer
+        section,
+        difficulty: difficultyLevel // Store difficulty as integer
+      }
+    });
+
+    return NextResponse.json(question);
+  } catch (error) {
+    console.error('Error creating question:', error);
+    return NextResponse.json(
+      { error: 'Failed to create question' },
+      { status: 500 }
+    );
   }
 } 

@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
 import prisma from '@/lib/prisma';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/authOptions';
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/authOptions";
+import questionsData from '@/docs/questions-import-template.json';
 import { Question } from '@/types'; // Assuming you have a types file
 
 // Temporary function to get all questions - Replace with DB query if questions are in DB
@@ -622,128 +624,82 @@ export async function GET(
   request: Request,
   { params }: { params: { attemptId: string } }
 ) {
-  try {
-    console.log(`Results API: Received request for attemptId: ${params.attemptId}`);
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
-    }
-    const userId = session.user.id;
+  const session = await getServerSession(authOptions);
+  if (!session || !session.user || !session.user.id) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
 
-    const testAttempt = await prisma.testAttempt.findUnique({
-      where: {
-        id: params.attemptId,
-        userId: userId, // Ensure the user owns this attempt
-      },
+  try {
+    const attempt = await prisma.testAttempt.findUnique({
+      where: { id: params.attemptId }
     });
 
-    if (!testAttempt) {
-      return new NextResponse(JSON.stringify({ error: 'Test attempt not found or unauthorized' }), { status: 404 });
+    if (!attempt) {
+      return NextResponse.json({ error: 'Test attempt not found' }, { status: 404 });
     }
 
-    // --- Parse and Structure the Data --- 
-    let parsedSectionsData: any[] = [];
-    // Fetch essay content directly from the attempt record
-    const essayContentFromDb = testAttempt.essayContent; // <<< Assuming schema was updated with essayContent field
-
-    try {
-        if (testAttempt.answers) {
-            if (testAttempt.section === 'full_test') { 
-                parsedSectionsData = JSON.parse(testAttempt.answers);
-            } else {
-                // Handle single section attempts
-                const answers = JSON.parse(testAttempt.answers);
-                console.log('Parsed answers from DB:', answers);
-                
-                // Calculate score based on correct answers
-                const correctAnswers = answers.filter((ans: any) => ans.isCorrect).length;
-                const score = (correctAnswers / answers.length) * 100;
-                
-                parsedSectionsData = [{
-                    type: testAttempt.section,
-                    isPilot: false,
-                    score: score,
-                    answers: answers.map((ans: any) => ({
-                        ...ans,
-                        questionId: `${testAttempt.section}-1-${ans.questionId}`,
-                    }))
-                }];
-
-                console.log('Formatted section data:', parsedSectionsData);
-            }
-        }
-    } catch (e) {
-      console.error("Error parsing test attempt answers:", e);
-      return new NextResponse(JSON.stringify({ error: 'Failed to parse result data' }), { status: 500 });
+    if (attempt.userId !== session.user.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Map parsed data to the structure expected by the frontend
-    const formattedSections: SectionResult[] = await Promise.all(
-        (parsedSectionsData || []).map(async (sectionData): Promise<SectionResult> => {
-        const sectionResult: SectionResult = {
-            sectionType: sectionData.type,
-            isPilot: sectionData.isPilot,
-            score: sectionData.score,
-            answers: [],
-            essayContent: undefined,
-        };
+    const answers = JSON.parse(attempt.answers);
+    const questions = [];
 
-        if (sectionData.type === 'essay') {
-             sectionResult.essayContent = essayContentFromDb ?? "(שגיאה בטעינת תוכן חיבור)"; 
-        } else if (Array.isArray(sectionData.answers)) {
-            // Process all answers in parallel for better performance
-            const answersPromises = sectionData.answers.map(async (ans: any): Promise<AnswerDetail> => {
-                // For full test, we need to ensure we're getting the right questions for each section
-                let questionDetails;
-                if (testAttempt.section === 'full_test') {
-                    // For full test, we need to construct the proper question ID
-                    const questionId = `${sectionData.type}-${sectionData.sectionIndex || 1}-${ans.questionId}`;
-                    questionDetails = await getQuestionDetails(questionId);
-                } else {
-                    // For single section tests, use the question ID as is
-                    questionDetails = await getQuestionDetails(ans.questionId, sectionData.type);
-                }
-                
-                // Calculate isCorrect by comparing selected answer with correct answer
-                const isCorrect = ans.selectedAnswerIndex === questionDetails?.correctAnswer;
-                
-                return {
-                    questionId: ans.questionId,
-                    selectedAnswerIndex: ans.selectedAnswerIndex,
-                    questionText: questionDetails?.text ?? `טקסט שאלה חסר (ID: ${ans.questionId})`,
-                    options: questionDetails?.options ?? [],
-                    correctAnswerIndex: questionDetails?.correctAnswer,
-                    isCorrect: isCorrect
-                };
-            });
-            
-            sectionResult.answers = await Promise.all(answersPromises);
-            console.log(`Processed answers for section ${sectionData.type}:`, sectionResult.answers);
+    // Handle both single section and full test formats
+    const sectionAnswers = Array.isArray(answers) ? answers : [answers];
+    
+    for (const section of sectionAnswers) {
+      // Ensure sectionQuestions is always an array
+      const sectionQuestions = Array.isArray(section.answers) ? section.answers : [];
+      
+      for (const answer of sectionQuestions) {
+        const question = await prisma.question.findUnique({
+          where: { id: answer.questionId }
+        });
+        
+        if (question) {
+          console.log(`API Check - Question ID: ${answer.questionId}, isCorrect from DB: ${answer.isCorrect}, Type: ${typeof answer.isCorrect}`); // Log the value
+          questions.push({
+            id: answer.questionId,
+            content: question.content,
+            options: JSON.parse(question.options),
+            correctAnswer: question.correctAnswer,
+            section: question.section,
+            difficulty: question.difficulty,
+            userAnswer: answer.selectedAnswerIndex,
+            isCorrect: answer.isCorrect, // Use the value directly
+            explanation: question.explanation
+          });
         }
-        return sectionResult;
-      })
-    );
-    // --------------------------------------
+      }
+    }
 
-    // Construct the final response object
-    const responseData: TestAttemptResult = {
-      id: testAttempt.id,
-      completedAt: testAttempt.completedAt.toISOString(),
-      sections: formattedSections,
-      // TODO: Add overallScore if calculated during completion/saved
-      // overallScore: testAttempt.overallScore 
+    // Format the response to match the frontend's expected structure
+    const resultData = {
+      id: attempt.id,
+      completedAt: attempt.completedAt,
+      overallScore: attempt.score,
+      sections: [{
+        sectionType: attempt.section,
+        isPilot: false,
+        score: attempt.score,
+        answers: questions.map(q => ({
+          questionId: q.id,
+          questionText: q.content,
+          options: q.options,
+          selectedAnswerIndex: q.userAnswer,
+          correctAnswerIndex: q.correctAnswer,
+          isCorrect: q.isCorrect,
+          explanation: q.explanation,
+          userAnswerText: q.options[q.userAnswer],
+          correctAnswerText: q.options[q.correctAnswer]
+        }))
+      }]
     };
 
-    console.log(`Results API: Returning structured data for attemptId: ${params.attemptId}`);
-    return NextResponse.json(responseData);
-
+    return NextResponse.json(resultData);
   } catch (error) {
-    console.error('Results API: Server error:', error);
-    return new NextResponse(
-      JSON.stringify({ error: 'שגיאת שרת פנימית' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
-  } finally {
-    await prisma.$disconnect();
+    console.error('Error fetching test results:', error);
+    return NextResponse.json({ error: 'Failed to fetch test results' }, { status: 500 });
   }
 } 

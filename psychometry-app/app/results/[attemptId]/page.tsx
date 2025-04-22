@@ -7,12 +7,15 @@ import Link from 'next/link';
 // Define types for the fetched data (adjust based on actual API response)
 interface AnswerDetail {
   questionId: string;
-  questionText: string; // Assuming API provides question text
-  options: string[];     // Assuming API provides options
+  questionText: string; 
+  content?: string;
+  options: string[];     
   selectedAnswerIndex: number;
   correctAnswerIndex: number;
   isCorrect: boolean;
-  // Add passage if needed for context
+  explanation?: string;
+  userAnswerText?: string;
+  correctAnswerText?: string;
 }
 
 interface SectionResult {
@@ -61,6 +64,7 @@ export default function ResultsPage() {
         // });
 
         setResultData(data);
+        console.log("Frontend Check - Received resultData:", data); // Log received data
       } catch (err) {
         console.error("Error fetching results:", err);
         setError(err instanceof Error ? err.message : 'שגיאה בטעינת תוצאות המבחן.');
@@ -165,51 +169,49 @@ export default function ResultsPage() {
                 </div>
 
                 <div className="space-y-4">
-                  {resultData.sections[0].answers.map((answer, index) => (
-                    <div key={index} className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-700">
-                      <p className="font-semibold text-gray-900 dark:text-white mb-2">
-                        שאלה {index + 1}: {answer.questionText}
-                      </p>
-                      <div className="space-y-1 text-sm">
-                        {answer.options.map((option, oIndex) => {
-                          const isSelected = oIndex === answer.selectedAnswerIndex;
-                          const isCorrect = oIndex === answer.correctAnswerIndex;
-                          
-                          // Show the option if:
-                          // 1. The answer was correct and this is the correct option
-                          // 2. The answer was wrong and this is either the selected option or the correct option
-                          const shouldShowOption = 
-                            (answer.isCorrect && isCorrect) || 
-                            (!answer.isCorrect && (isSelected || isCorrect));
-                          
-                          if (!shouldShowOption) return null;
-                          
-                          let className = "p-1 rounded ";
-                          if (isCorrect) {
-                            className += "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200";
-                          } else if (isSelected && !answer.isCorrect) {
-                            className += "bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200";
-                          }
-                          
-                          return (
-                            <p key={oIndex} className={className}>
-                              ({oIndex + 1}) {option}
-                              {isSelected && (
-                                <span className="mr-2 font-medium">
-                                  {answer.isCorrect ? '✅ תשובתך נכונה' : '❌ תשובתך שגויה'}
-                                </span>
-                              )}
-                              {!answer.isCorrect && isCorrect && (
-                                <span className="mr-2 font-medium text-green-700 dark:text-green-300">
-                                  (התשובה הנכונה)
-                                </span>
-                              )}
+                  {resultData.sections[0].answers.map((answer, index) => {
+                    console.log(`Frontend Check - Answer ${index + 1}: isCorrect=${answer.isCorrect}, Type=${typeof answer.isCorrect}`); // Log value used in render
+                    return (
+                      <div key={index} className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-700">
+                        <p className="font-semibold text-gray-900 dark:text-white mb-2">
+                          שאלה {index + 1}: {answer.questionText || answer.content || 'טקסט שאלה חסר'}
+                        </p>
+                        
+                        <div className="mt-4">
+                          <p className="font-medium">תשובה שבחרת:</p>
+                          <div className={`p-2 mt-1 rounded ${answer.isCorrect 
+                              ? 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200' 
+                              : 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200'}`}>
+                            {answer.selectedAnswerIndex !== undefined && answer.selectedAnswerIndex !== null
+                              ? `(${answer.selectedAnswerIndex + 1}) ${answer.options[answer.selectedAnswerIndex]}`
+                              : 'לא נבחרה תשובה'}
+                            <span className="mr-2 font-medium">
+                              {answer.isCorrect ? '✅ תשובתך נכונה' : '❌ תשובתך שגויה'}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        {!answer.isCorrect && (
+                          <div className="mt-3">
+                            <p className="font-medium">התשובה הנכונה:</p>
+                            <div className="p-2 mt-1 rounded bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200">
+                              {answer.correctAnswerIndex !== undefined && answer.correctAnswerIndex !== null
+                                ? `(${answer.correctAnswerIndex + 1}) ${answer.options[answer.correctAnswerIndex]}`
+                                : 'אין תשובה נכונה'}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {answer.explanation && (
+                          <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              <span className="font-medium">הסבר:</span> {answer.explanation}
                             </p>
-                          );
-                        })}
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </>
             )}
@@ -266,53 +268,49 @@ export default function ResultsPage() {
                 {/* Display MC Answers */}
                 {section.answers && section.answers.length > 0 && (
                   <ul className="space-y-4">
-                    {section.answers.map((answer, qIndex) => (
-                      <li key={answer.questionId} className="p-4 border rounded-md bg-gray-50 dark:bg-gray-700/60 dark:border-gray-600">
-                        <p className="font-semibold text-gray-900 dark:text-white mb-2">
-                          שאלה {qIndex + 1}: {answer.questionText || 'טקסט שאלה חסר'}
-                        </p>
-                        {/* TODO: Display passage if available */}
-                        <div className="space-y-1 text-sm">
-                          {answer.options.map((option, oIndex) => {
-                            const isSelected = oIndex === answer.selectedAnswerIndex;
-                            const isCorrect = oIndex === answer.correctAnswerIndex;
-                            
-                            // Show the option if:
-                            // 1. The answer was correct and this is the correct option
-                            // 2. The answer was wrong and this is either the selected option or the correct option
-                            const shouldShowOption = 
-                              (answer.isCorrect && isCorrect) || 
-                              (!answer.isCorrect && (isSelected || isCorrect));
-                            
-                            if (!shouldShowOption) return null;
-                            
-                            let className = "p-1 rounded ";
-                            if (isCorrect) {
-                              className += "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200";
-                            } else if (isSelected && !answer.isCorrect) {
-                              className += "bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200";
-                            }
-                            
-                            return (
-                              <p key={oIndex} className={className}>
-                                ({oIndex + 1}) {option}
-                                {isSelected && (
-                                  <span className="mr-2 font-medium">
-                                    {answer.isCorrect ? '✅ תשובתך נכונה' : '❌ תשובתך שגויה'}
-                                  </span>
-                                )}
-                                {!answer.isCorrect && isCorrect && (
-                                  <span className="mr-2 font-medium text-green-700 dark:text-green-300">
-                                    (התשובה הנכונה)
-                                  </span>
-                                )}
+                    {section.answers.map((answer, qIndex) => {
+                      console.log(`Frontend Check (Full) - Section ${index}, Answer ${qIndex + 1}: isCorrect=${answer.isCorrect}, Type=${typeof answer.isCorrect}`); // Log value used in render
+                      return (
+                        <li key={answer.questionId} className="p-4 border rounded-md bg-gray-50 dark:bg-gray-700/60 dark:border-gray-600">
+                          <p className="font-semibold text-gray-900 dark:text-white mb-2">
+                            שאלה {qIndex + 1}: {answer.questionText || answer.content || 'טקסט שאלה חסר'}
+                          </p>
+                          {/* TODO: Display passage if available */}
+                          <div className="mt-4">
+                            <p className="font-medium">תשובה שבחרת:</p>
+                            <div className={`p-2 mt-1 rounded ${answer.isCorrect 
+                                ? 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200' 
+                                : 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200'}`}>
+                              {answer.selectedAnswerIndex !== undefined && answer.selectedAnswerIndex !== null
+                                ? `(${answer.selectedAnswerIndex + 1}) ${answer.options[answer.selectedAnswerIndex]}`
+                                : 'לא נבחרה תשובה'}
+                              <span className="mr-2 font-medium">
+                                {answer.isCorrect ? '✅ תשובתך נכונה' : '❌ תשובתך שגויה'}
+                              </span>
+                            </div>
+                          </div>
+                          
+                          {!answer.isCorrect && (
+                            <div className="mt-3">
+                              <p className="font-medium">התשובה הנכונה:</p>
+                              <div className="p-2 mt-1 rounded bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200">
+                                {answer.correctAnswerIndex !== undefined && answer.correctAnswerIndex !== null
+                                  ? `(${answer.correctAnswerIndex + 1}) ${answer.options[answer.correctAnswerIndex]}`
+                                  : 'אין תשובה נכונה'}
+                              </div>
+                            </div>
+                          )}
+                          
+                          {answer.explanation && (
+                            <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
+                              <p className="text-sm text-gray-600 dark:text-gray-400">
+                                <span className="font-medium">הסבר:</span> {answer.explanation}
                               </p>
-                            );
-                          })}
-                        </div>
-                         {/* TODO: Add Explanation field if available */}
-                      </li>
-                    ))}
+                            </div>
+                          )}
+                        </li>
+                      );
+                    })}
                   </ul>
                 )}
                 

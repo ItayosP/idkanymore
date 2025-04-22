@@ -1,0 +1,784 @@
+{
+  "questions": [
+    {
+      "content": "אפיסטמולוגיה : ידיעה",
+      "options": [
+        "אונטולוגיה : ישות",
+        "אתיקה : מוסר",
+        "אסתטיקה : יופי",
+        "לוגיקה : טיעון"
+      ],
+      "correctAnswer": "אונטולוגיה : ישות",
+      "section": "verbal",
+      "difficulty": "hard"
+    },
+    {
+      "content": "סינקדוכה : חלק מייצג שלם",
+      "options": [
+        "מטונימיה : דימוי מחליף מושג",
+        "אוקסימורון : צירוף סותר",
+        "היפרבולה : הגזמה",
+        "ליטוטס : לשון המעטה"
+      ],
+      "correctAnswer": "מטונימיה : דימוי מחליף מושג",
+      "section": "verbal",
+      "difficulty": "medium"
+    },
+    {
+      "content": "אקסיומה : לא ניתנת להוכחה",
+      "options": [
+        "תיאורמה : נובעת מאקסיומות",
+        "היפותזה : ניתנת לבדיקה",
+        "פרדוקס : מכיל סתירה",
+        "דוגמה : אמיתה מוחלטת"
+      ],
+      "correctAnswer": "היפותזה : ניתנת לבדיקה",
+      "section": "verbal",
+      "difficulty": "hard"
+    },
+    {
+      "content": "להדיר : שינה",
+      "options": [
+        "להניא : כוונה",
+        "להסית : מרד",
+        "לגרוע : ערך",
+        "לכלוא : חירות"
+      ],
+      "correctAnswer": "להניא : כוונה",
+      "section": "verbal",
+      "difficulty": "medium"
+    },
+    {
+      "content": "אינהרנטי : טבוע במהות",
+      "options": [
+        "אקראי : חסר סיבה",
+        "אקסטרינזי : חיצוני",
+        "אמפירי : מבוסס ניסיון",
+        "אפריורי : קודם לניסיון"
+      ],
+      "correctAnswer": "אקסטרינזי : חיצוני",
+      "section": "verbal",
+      "difficulty": "hard"
+    },
+    {
+      "content": "סופיזם : שכנוע מטעה",
+      "options": [
+        "רטוריקה : אמנות הנאום",
+        "דיאלקטיקה : בירור האמת",
+        "דמגוגיה : ליבוי יצרים",
+        "אпологетика : הגנה על אמונה"
+      ],
+      "correctAnswer": "דמגוגיה : ליבוי יצרים",
+      "section": "verbal",
+      "difficulty": "medium"
+    },
+    {
+      "content": "הניסיון ל________ את מורכבותה של התופעה לכדי מודל ________ ופשטני, ________ בהכרח את רבדיה העמוקים ואת הגורמים הרבים המעצבים אותה.",
+      "options": [
+        "לצמצם / ליניארי / מתעלם מ-",
+        "להרחיב / רב-ממדי / מדגיש את",
+        "לתאר / הוליסטי / כולל את",
+        "לנתח / מפורט / מחמיץ את"
+      ],
+      "correctAnswer": "לצמצם / ליניארי / מתעלם מ-",
+      "section": "verbal",
+      "difficulty": "medium"
+    },
+    {
+      "content": "אף שהיה ידוע ב________ הלוגית הקפדנית שאפיינה את כתביו הפילוסופיים, בשיחותיו הפרטיות הוא נטה לעיתים ל________ וולגרית ואף ל________ שאינם עולים בקנה אחד עם התדמית האקדמית שלו.",
+      "options": [
+        "קוהרנטיות / שנינות / הומור דק",
+        "רשלנות / בוטות / טיעונים מופרכים",
+        "חדות / התלהמות / גידופים",
+        "עמימות / התפלספות / אנקדוטות"
+      ],
+      "correctAnswer": "חדות / התלהמות / גידופים",
+      "section": "verbal",
+      "difficulty": "medium"
+    },
+    {
+      "content": "הטענה כי ניתן ________ לחלוטין את ההשפעות התרבותיות המעצבות את תפיסת המציאות שלנו היא ________; למעשה, גם החוקר ה________ ביותר מגיע למחקרו עם מטען תרבותי ומושגי מסוים.",
+      "options": [
+        "לנטרל / יומרנית / אובייקטיבי",
+        "לכמת / מבוססת / סובייקטיבי",
+        "לאמץ / ריאלית / ביקורתי",
+        "להדחיק / פשטנית / מעורב"
+      ],
+      "correctAnswer": "לנטרל / יומרנית / אובייקטיבי",
+      "section": "verbal",
+      "difficulty": "medium"
+    },
+    {
+      "content": "מה קובע את משמעות המילים לפי ויטגנשטיין המאוחר?",
+      "options": [
+        "ההגדרה המילונית המדויקת של כל מילה.",
+        "האובייקט בעולם שהמילה מייצגת באופן ישיר.",
+        "האופן שבו משתמשים במילים בתוך הקשרים חברתיים ופרקטיקות ספציפיות.",
+        "הכוונה האישית של הדובר בעת השימוש במילה."
+      ],
+      "correctAnswer": "האופן שבו משתמשים במילים בתוך הקשרים חברתיים ופרקטיקות ספציפיות.",
+      "section": "verbal",
+      "difficulty": "easy"
+    },
+    {
+      "content": "מהי טענתו המרכזית של פייראבנד לגבי השיטה המדעית, כפי שהיא מוצגת בפסקה?",
+      "options": [
+        "יש לדבוק בנוקשות בשיטה המדעית המוגדרת כדי להבטיח התקדמות.",
+        "השיטה המדעית היחידה התקפה היא זו המבוססת על תצפית ישירה.",
+        "בפועל, התקדמות מדעית אינה תמיד תוצאה של יישום שיטתי של כללים מוגדרים, ולעיתים דורשת גמישות ואף חריגה מהם.",
+        "\"אנרכיזם אפיסטמולוגי\" מוביל תמיד למבוי סתום במחקר המדעי."
+      ],
+      "correctAnswer": "בפועל, התקדמות מדעית אינה תמיד תוצאה של יישום שיטתי של כללים מוגדרים, ולעיתים דורשת גמישות ואף חריגה מהם.",
+      "section": "verbal",
+      "difficulty": "easy"
+    },
+    {
+      "content": "מהי המשמעות העיקרית של \"מות המחבר\" בהקשר זה?",
+      "options": [
+        "הסופר אינו חשוב כלל ליצירה הספרותית.",
+        "יש להתמקד בביוגרפיה של הסופר כדי להבין את הטקסט.",
+        "הדגש בפרשנות עובר מכוונת המחבר אל הטקסט עצמו ואל הקורא כיצרן משמעות.",
+        "רק יצירות שכותביהן נפטרו ראויות לניתוח ספרותי."
+      ],
+      "correctAnswer": "הדגש בפרשנות עובר מכוונת המחבר אל הטקסט עצמו ואל הקורא כיצרן משמעות.",
+      "section": "verbal",
+      "difficulty": "easy"
+    },
+    {
+      "content": "מהו המאפיין המרכזי של מערכות כאוטיות המתואר בפסקה?",
+      "options": [
+        "התנהגותן אקראית לחלוטין ואינה ניתנת לשום ניתוח.",
+        "הן אינן רגישות כלל לשינויים בתנאי ההתחלה.",
+        "שינויים קטנים בתחילת התהליך יכולים לגרום להבדלים גדולים מאוד בתוצאה הסופית.",
+        "הן תמיד ליניאריות וקלות לחיזוי."
+      ],
+      "correctAnswer": "שינויים קטנים בתחילת התהליך יכולים לגרום להבדלים גדולים מאוד בתוצאה הסופית.",
+      "section": "verbal",
+      "difficulty": "easy"
+    },
+    {
+      "content": "מה ניתן להסיק מהמשפט על יחסו המורכב של ניטשה למסורת היהודית-נוצרית?",
+      "options": [
+        "הוא דחה את כולה באופן גורף וחד-משמעי.",
+        "הוא אימץ את הנצרות המאוחרת אך דחה את הברית הישנה.",
+        "הוא מתח ביקורת חריפה על היבטים מרכזיים בה, אך זיהה ערך מסוים בחלקים קדומים יותר שלה.",
+        "הוא ראה ב\"מוסר העבדים\" את שיא ההתפתחות המוסרית האנושית."
+      ],
+      "correctAnswer": "הוא מתח ביקורת חריפה על היבטים מרכזיים בה, אך זיהה ערך מסוים בחלקים קדומים יותר שלה.",
+      "section": "verbal",
+      "difficulty": "medium"
+    },
+    {
+      "content": "מהי \"סימולקרה\" על פי בודריאר?",
+      "options": [
+        "ייצוג נאמן ומדויק של המציאות הממשית.",
+        "המציאות האובייקטיבית כפי שהיא, ללא ייצוגים.",
+        "העתק או דימוי שנתלש מהמקור או שאין לו כלל מקור במציאות, והופך למציאות בפני עצמה.",
+        "תיאוריה מדעית המסבירה את מבנה המציאות."
+      ],
+      "correctAnswer": "העתק או דימוי שנתלש מהמקור או שאין לו כלל מקור במציאות, והופך למציאות בפני עצמה.",
+      "section": "verbal",
+      "difficulty": "medium"
+    },
+    {
+      "content": "מהי הדרך לאושר (\"אאודאימוניה\") על פי אריסטו?",
+      "options": [
+        "חיים של הנאה חושית מקסימלית.",
+        "השגת עושר וכוח פוליטי.",
+        "חיים רציונליים ופעילים בהתאם למידות טובות המהוות איזון בין קצוות.",
+        "פרישה מהעולם והתמקדות בהתבוננות פילוסופית בלבד."
+      ],
+      "correctAnswer": "חיים רציונליים ופעילים בהתאם למידות טובות המהוות איזון בין קצוות.",
+      "section": "verbal",
+      "difficulty": "easy"
+    },
+    {
+      "content": "מהי הטענה המרכזית של הביקורת הפמיניסטית על המדע המוצגת בפסקה?",
+      "options": [
+        "המדע הוא תחום שבו נשים מצטיינות יותר מגברים.",
+        "האובייקטיביות המדעית המסורתית הייתה לעיתים קרובות מוטה מנקודת מבט גברית, ויש צורך בבחינה ביקורתית ובריבוי נקודות מבט.",
+        "יש לזנוח לחלוטין את השאיפה לאובייקטיביות במדע.",
+        "הביקורת הפמיניסטית מתמקדת רק במדעי החברה ומתעלמת ממדעי הטבע."
+      ],
+      "correctAnswer": "האובייקטיביות המדעית המסורתית הייתה לעיתים קרובות מוטה מנקודת מבט גברית, ויש צורך בבחינה ביקורתית ובריבוי נקודות מבט.",
+      "section": "verbal",
+      "difficulty": "easy"
+    },
+    {
+      "content": "מהי הבעיה המרכזית שמציגה \"בעיית האינדוקציה\" של יום?",
+      "options": [
+        "הקושי להסיק מסקנות תקפות מן הכלל אל הפרט (דדוקציה).",
+        "היעדר בסיס לוגי מוצק להנחה שהעתיד ידמה לעבר או שמקרים שטרם נצפו ידמו לאלו שנצפו.",
+        "העובדה שכל הברבורים בעולם אינם לבנים.",
+        "אי-אפשרותה של התצפית האמפירית כמקור לידע."
+      ],
+      "correctAnswer": "היעדר בסיס לוגי מוצק להנחה שהעתיד ידמה לעבר או שמקרים שטרם נצפו ידמו לאלו שנצפו.",
+      "section": "verbal",
+      "difficulty": "easy"
+    },
+    {
+      "content": "מדוע, לטענת יום, לא ניתן להצדיק את \"עקרון אחידות הטבע\" באמצעות אינדוקציה?",
+      "options": [
+        "כי עקרון זה נוגד את הניסיון האמפירי שלנו.",
+        "כי הצדקה כזו תהיה בגדר הנחת המבוקש (הנחה מראש של מה שרוצים להוכיח).",
+        "כי ניתן להוכיח את העיקרון באופן דדוקטיבי טהור.",
+        "כי הטבע אינו מתנהג באופן אחיד כלל."
+      ],
+      "correctAnswer": "כי הצדקה כזו תהיה בגדר הנחת המבוקש (הנחה מראש של מה שרוצים להוכיח).",
+      "section": "verbal",
+      "difficulty": "medium"
+    },
+    {
+      "content": "כיצד הציע קרל פופר להתמודד עם בעיית האינדוקציה במדע?",
+      "options": [
+        "הוא טען שיש למצוא הוכחה לוגית לאינדוקציה.",
+        "הוא הציע שהמדע יתבסס על דדוקציה ועל ניסיונות הפרכה של תיאוריות, במקום על אישושן.",
+        "הוא הראה שהאינדוקציה היא כלי אמין ברוב המקרים.",
+        "הוא קרא לזנוח את השיטה המדעית לחלוטין."
+      ],
+      "correctAnswer": "הוא הציע שהמדע יתבסס על דדוקציה ועל ניסיונות הפרכה של תיאוריות, במקום על אישושן.",
+      "section": "verbal",
+      "difficulty": "easy"
+    },
+    {
+      "content": "מהי המשמעות של היותה של תיאוריה \"מאוששת\" (Corroborated) לפי פופר (שורה 15)?",
+      "options": [
+        "התיאוריה הוכחה כאמת מוחלטת וסופית.",
+        "התיאוריה שרדה ניסיונות הפרכה ועל כן נחשבת חזקה יותר, אך לא מוכחת סופית.",
+        "התיאוריה הופרכה באופן ניסויי.",
+        "התיאוריה פשוטה ואלגנטית יותר מתיאוריות מתחרות."
+      ],
+      "correctAnswer": "התיאוריה שרדה ניסיונות הפרכה ועל כן נחשבת חזקה יותר, אך לא מוכחת סופית.",
+      "section": "verbal",
+      "difficulty": "medium"
+    },
+    {
+      "content": "מה ניתן להסיק מהפסקה האחרונה (שורות 18-22) לגבי השימוש באינדוקציה בפועל?",
+      "options": [
+        "מדענים ואנשים הפסיקו להשתמש באינדוקציה בעקבות הביקורת הפילוסופית.",
+        "הוויכוח הפילוסופי הוכרע סופית לטובת האינדוקציה.",
+        "למרות הבעיות הפילוסופיות, אינדוקציה ממשיכה להיות כלי חשיבה מרכזי ושימושי, ויש המנסים למצוא לה הצדקות פרגמטיות או הסתברותיות.",
+        "אין כל קשר בין הוויכוח הפילוסופי לבין הפרקטיקה המדעית וחיי היומיום."
+      ],
+      "correctAnswer": "למרות הבעיות הפילוסופיות, אינדוקציה ממשיכה להיות כלי חשיבה מרכזי ושימושי, ויש המנסים למצוא לה הצדקות פרגמטיות או הסתברותיות.",
+      "section": "verbal",
+      "difficulty": "easy"
+    },
+    {
+      "content": "מהי הנימה הכללית של הקטע ביחס לבעיית האינדוקציה?",
+      "options": [
+        "זלזול בחשיבותה של הבעיה.",
+        "הצגת הבעיה כחידה פילוסופית שנפתרה לחלוטין.",
+        "תיאור הבעיה כאתגר פילוסופי יסודי ומתמשך לידע האנושי, תוך הצגת פתרונות והסתייגויות.",
+        "טענה שהבעיה רלוונטית רק למתמטיקאים ואינה נוגעת למדע או לחיים."
+      ],
+      "correctAnswer": "תיאור הבעיה כאתגר פילוסופי יסודי ומתמשך לידע האנושי, תוך הצגת פתרונות והסתייגויות.",
+      "section": "verbal",
+      "difficulty": "easy"
+    },
+    {
+      "content": "כמה פתרונות במספרים שלמים חיוביים יש למשוואה $\\frac{1}{x} + \\frac{1}{y} = \\frac{1}{4}$?",
+      "options": [
+        "3",
+        "5",
+        "7",
+        "9"
+      ],
+      "correctAnswer": "5",
+      "section": "quantitative",
+      "difficulty": "hard"
+    },
+    {
+      "content": "ברז א' ממלא בריכה ב-6 שעות. ברז ב' מרוקן את אותה בריכה ב-10 שעות. אם שני הברזים נפתחים יחד כשהבריכה ריקה, תוך כמה זמן תתמלא הבריכה?",
+      "options": [
+        "4 שעות",
+        "15 שעות",
+        "16 שעות",
+        "9 שעות"
+      ],
+      "correctAnswer": "15 שעות",
+      "section": "quantitative",
+      "difficulty": "medium"
+    },
+    {
+      "content": "נתון משולש ABC. הנקודות D, E, F הן אמצעי הצלעות BC, AC, AB בהתאמה. מה היחס בין שטח המשולש DEF לשטח המשולש ABC?",
+      "options": [
+        "1:2",
+        "1:3",
+        "1:4",
+        "2:3"
+      ],
+      "correctAnswer": "1:4",
+      "section": "quantitative",
+      "difficulty": "medium"
+    },
+    {
+      "content": "בכמה עלה מחיר מוצר, אם לאחר שהוזל ב- 19%, מחירו הנוכחי הוא 19% פחות ממחירו לאחר ההוזלה הקודמת (הוזלה נוספת של 19%)? המחיר הסופי נמוך ב-152 ש\"ח ממחירו המקורי.",
+      "options": [
+        "400 ש\"ח",
+        "500 ש\"ח",
+        "600 ש\"ח",
+        "450 ש\"ח"
+      ],
+      "correctAnswer": "400 ש\"ח",
+      "section": "quantitative",
+      "difficulty": "hard"
+    },
+    {
+      "content": "מצא את ספרת היחידות של המספר $7^{2025}$.",
+      "options": [
+        "1",
+        "3",
+        "7",
+        "9"
+      ],
+      "correctAnswer": "7",
+      "section": "quantitative",
+      "difficulty": "easy"
+    },
+    {
+      "content": "ממוצע הגילים בקבוצה של n אנשים הוא 40. אם מצטרף לקבוצה אדם שגילו 60, הממוצע החדש הוא 42. מהו n?",
+      "options": [
+        "8",
+        "9",
+        "10",
+        "11"
+      ],
+      "correctAnswer": "9",
+      "section": "quantitative",
+      "difficulty": "easy"
+    },
+    {
+      "content": "במעגל שרדיוסו R חסום משושה משוכלל. מה היחס בין שטח המשושה לשטח המעגל?",
+      "options": [
+        "$\\frac{3\\sqrt{3}}{2\\pi}$",
+        "$\\frac{2\\sqrt{3}}{\\pi}$",
+        "$\\frac{3}{\\pi}$",
+        "$\\frac{\\sqrt{3}}{\\pi}$"
+      ],
+      "correctAnswer": "$\\frac{3\\sqrt{3}}{2\\pi}$",
+      "section": "quantitative",
+      "difficulty": "medium"
+    },
+    {
+      "content": "נתון כי x ו-y מספרים ממשיים המקיימים $x^2+y^2=1$. מהו הערך המקסימלי של הביטוי $x+y$?",
+      "options": [
+        "1",
+        "$\\sqrt{2}$",
+        "2",
+        "1.5"
+      ],
+      "correctAnswer": "$\\sqrt{2}$",
+      "section": "quantitative",
+      "difficulty": "hard"
+    },
+    {
+      "content": "במסיבה 5 זוגות נשואים. בוחרים באקראי 4 אנשים. מה ההסתברות שנבחר בדיוק זוג נשוי אחד?",
+      "options": [
+        "$\\frac{\\binom{5}{1}\\binom{4}{2} \\times 2^2}{\\binom{10}{4}}$",
+        "$\\frac{5\\times 8\\times 6}{\\binom{10}{4}}$",
+        "$\\frac{5\\times \\binom{8}{2}}{\\binom{10}{4}}$",
+        "$\\frac{5\\times 4\\times 3\\times 2}{\\binom{10}{4}}$"
+      ],
+      "correctAnswer": "$\\frac{\\binom{5}{1}\\binom{4}{2} \\times 2^2}{\\binom{10}{4}}$",
+      "section": "quantitative",
+      "difficulty": "hard"
+    },
+    {
+      "content": "פתור את אי-השוויון: $|x-3| + |x+1| \\le 4$",
+      "options": [
+        "$-1 \\le x \\le 3$",
+        "$x \\le -1 \\text{ or } x \\ge 3$",
+        "$-2 \\le x \\le 2$",
+        "אין פתרון"
+      ],
+      "correctAnswer": "$-1 \\le x \\le 3$",
+      "section": "quantitative",
+      "difficulty": "medium"
+    },
+    {
+      "content": "מכונית נוסעת מ-A ל-B במהירות $v_1$. בדרכה חזרה מ-B ל-A היא נוסעת במהירות $v_2$. מה המהירות הממוצעת של המכונית לכל הנסיעה הלוך ושוב? (הממוצע ההרמוני)",
+      "options": [
+        "$\\frac{v_1+v_2}{2}$",
+        "$\\sqrt{v_1 v_2}$",
+        "$\\frac{2v_1 v_2}{v_1+v_2}$",
+        "$\\frac{|v_1 - v_2|}{2}$"
+      ],
+      "correctAnswer": "$\\frac{2v_1 v_2}{v_1+v_2}$",
+      "section": "quantitative",
+      "difficulty": "medium"
+    },
+    {
+      "content": "מהו סכום הטור האינסופי: $1 + \\frac{1}{3} + \\frac{1}{9} + \\frac{1}{27} + ...$ (סכום סדרה הנדסית אינסופית: $S = \\frac{a_1}{1-q}$)",
+      "options": [
+        "2",
+        "1.5",
+        "$\\frac{4}{3}$",
+        "$\\infty$"
+      ],
+      "correctAnswer": "1.5",
+      "section": "quantitative",
+      "difficulty": "easy"
+    },
+    {
+      "content": "גוף חלול בצורת קובייה שאורך צלעה הפנימי 4 ס\"מ, עשוי מחומר שעובי דפנותיו 1 ס\"מ. מהו נפח החומר שממנו עשוי הגוף?",
+      "options": [
+        "216-64=152",
+        "125-64=61",
+        "$6^3-4^3=216-64=152$",
+        "$5^3-4^3=125-64=61$"
+      ],
+      "correctAnswer": "$6^3-4^3=216-64=152$",
+      "section": "quantitative",
+      "difficulty": "medium"
+    },
+    {
+      "content": "מהו ערך הביטוי $\\sqrt{6+\\sqrt{6+\\sqrt{6+...}}}$ ?",
+      "options": [
+        "2",
+        "$\\sqrt{6}$",
+        "3",
+        "$2\\sqrt{3}$"
+      ],
+      "correctAnswer": "3",
+      "section": "quantitative",
+      "difficulty": "medium"
+    },
+    {
+      "content": "בכמה דרכים ניתן לסדר 4 ספרי מתמטיקה שונים ו-3 ספרי פיזיקה שונים על מדף כך שכל ספרי המתמטיקה יעמדו יחד וכל ספרי הפיזיקה יעמדו יחד?",
+      "options": [
+        "$4! \\times 3!$",
+        "$7!$",
+        "$2 \\times 4! \\times 3!$",
+        "$\\binom{7}{4} \\times 4! \\times 3!$"
+      ],
+      "correctAnswer": "$2 \\times 4! \\times 3!$",
+      "section": "quantitative",
+      "difficulty": "medium"
+    },
+    {
+      "content": "נתון מעגל $x^2+y^2=25$. ישר $y=mx+b$ משיק למעגל בנקודה (3, 4). מהו ערכו של m? (רדיוס מאונך למשיק בנקודת ההשקה)",
+      "options": [
+        "$\\frac{3}{4}$",
+        "$-\\frac{3}{4}$",
+        "$\\frac{4}{3}$",
+        "$-\\frac{4}{3}$"
+      ],
+      "correctAnswer": "$-\\frac{3}{4}$",
+      "section": "quantitative",
+      "difficulty": "medium"
+    },
+    {
+      "content": "תמיסת מלח בריכוז 15% ובמשקל 200 גרם עורבבה עם תמיסת מלח בריכוז 30% ובמשקל 300 גרם. מהו ריכוז המלח בתערובת החדשה?",
+      "options": [
+        "20%",
+        "22.5%",
+        "24%",
+        "25%"
+      ],
+      "correctAnswer": "24%",
+      "section": "quantitative",
+      "difficulty": "easy"
+    },
+    {
+      "content": "מספר N משאיר שארית 3 בחלוקה ל-7. מהי השארית שתתקבל מחלוקת המספר $2N+5$ ב-7?",
+      "options": [
+        "0",
+        "2",
+        "4",
+        "5"
+      ],
+      "correctAnswer": "4",
+      "section": "quantitative",
+      "difficulty": "easy"
+    },
+    {
+      "content": "תיק מכיל 4 כדורים אדומים ו-6 כדורים כחולים. מוציאים באקראי 3 כדורים ללא החזרה. מה ההסתברות שכל הכדורים שהוצאו הם מאותו הצבע?",
+      "options": [
+        "$\\frac{\\binom{4}{3}}{\\binom{10}{3}} + \\frac{\\binom{6}{3}}{\\binom{10}{3}}$",
+        "$\\frac{4\\times 3\\times 2 + 6\\times 5\\times 4}{\\binom{10}{3}}$",
+        "$\\frac{4}{10}\\times\\frac{3}{9}\\times\\frac{2}{8} + \\frac{6}{10}\\times\\frac{5}{9}\\times\\frac{4}{8}$",
+        "כל התשובות (1)-(3) נכונות ושקולות."
+      ],
+      "correctAnswer": "כל התשובות (1)-(3) נכונות ושקולות.",
+      "section": "quantitative",
+      "difficulty": "hard"
+    },
+    {
+      "content": "אם $f(x)=x^2+1$ ו- $g(x)=2x-1$. מהי הפונקציה המורכבת $f(g(x))$?",
+      "options": [
+        "$(x^2+1)(2x-1)$",
+        "$(2x-1)^2+1$",
+        "$2(x^2+1)-1$",
+        "$2x^2+1$"
+      ],
+      "correctAnswer": "$(2x-1)^2+1$",
+      "section": "quantitative",
+      "difficulty": "easy"
+    },
+    {
+      "content": "The committee's final report was criticized for its _______ conclusions, which seemed to deliberately avoid addressing the core issues.",
+      "options": [
+        "trenchant",
+        "unequivocal",
+        "perspicacious",
+        "equivocal"
+      ],
+      "correctAnswer": "equivocal",
+      "section": "english",
+      "difficulty": "hard"
+    },
+    {
+      "content": "His _______ arguments, though presented with rhetorical flourish, ultimately lacked substantive evidence.",
+      "options": [
+        "compelling",
+        "incontrovertible",
+        "specious",
+        "rigorous"
+      ],
+      "correctAnswer": "specious",
+      "section": "english",
+      "difficulty": "medium"
+    },
+    {
+      "content": "The philosopher's work attempted to _______ the seemingly disparate fields of existentialism and phenomenology.",
+      "options": [
+        "bifurcate",
+        "excoriate",
+        "synthesize",
+        "repudiate"
+      ],
+      "correctAnswer": "synthesize",
+      "section": "english",
+      "difficulty": "medium"
+    },
+    {
+      "content": "Years of _______ living had taken their toll, leaving him physically weakened and spiritually adrift.",
+      "options": [
+        "temperate",
+        "abstemious",
+        "dissolute",
+        "virtuous"
+      ],
+      "correctAnswer": "dissolute",
+      "section": "english",
+      "difficulty": "medium"
+    },
+    {
+      "content": "Her _______ nature made her ill-suited for the cutthroat world of corporate politics.",
+      "options": [
+        "pugnacious",
+        "mercenary",
+        "guileless",
+        "rapacious"
+      ],
+      "correctAnswer": "guileless",
+      "section": "english",
+      "difficulty": "medium"
+    },
+    {
+      "content": "The discovery of the ancient artifact _______ the prevailing historical narrative, forcing a reevaluation of the period.",
+      "options": [
+        "buttressed",
+        "obviated",
+        "corroborated",
+        "subverted"
+      ],
+      "correctAnswer": "subverted",
+      "section": "english",
+      "difficulty": "medium"
+    },
+    {
+      "content": "He delivered a _______ against the perceived moral failings of contemporary society.",
+      "options": [
+        "panegyric",
+        "encomium",
+        "jeremiad",
+        "citation"
+      ],
+      "correctAnswer": "jeremiad",
+      "section": "english",
+      "difficulty": "hard"
+    },
+    {
+      "content": "The _______ details included in the witness's testimony added credibility to her account.",
+      "options": [
+        "extraneous",
+        "spurious",
+        "salient",
+        "granular"
+      ],
+      "correctAnswer": "granular",
+      "section": "english",
+      "difficulty": "hard"
+    },
+    {
+      "content": "The patina of erudition barely concealed a profound intellectual insecurity.",
+      "options": [
+        "His deep intellectual confidence was evident despite his lack of scholarly appearance.",
+        "The superficial appearance of deep learning thinly veiled a significant lack of confidence in his own intellect.",
+        "His profound knowledge was matched by an equally profound sense of intellectual security.",
+        "Intellectual insecurity prevented him from acquiring even a veneer of erudition."
+      ],
+      "correctAnswer": "The superficial appearance of deep learning thinly veiled a significant lack of confidence in his own intellect.",
+      "section": "english",
+      "difficulty": "hard"
+    },
+    {
+      "content": "It behooves us to consider the potential ramifications before embarking on such a precipitous course of action.",
+      "options": [
+        "Acting hastily without considering the consequences is the recommended course of action.",
+        "We are obligated to reflect on the possible outcomes prior to undertaking such a rash action.",
+        "The potential ramifications prevent us from considering any course of action, however cautious.",
+        "It is unnecessary to consider the consequences when the course of action is clearly beneficial."
+      ],
+      "correctAnswer": "We are obligated to reflect on the possible outcomes prior to undertaking such a rash action.",
+      "section": "english",
+      "difficulty": "medium"
+    },
+    {
+      "content": "The artist's oeuvre is characterized by a protean quality, defying easy categorization.",
+      "options": [
+        "The artist's entire body of work is monotonous and easily classified.",
+        "A quality of tending towards easy categorization defines the artist's work.",
+        "The variable and diverse nature of the artist's collective works makes them difficult to classify simply.",
+        "Difficulty in categorization is irrelevant to the unchanging quality of the artist's oeuvre."
+      ],
+      "correctAnswer": "The variable and diverse nature of the artist's collective works makes them difficult to classify simply.",
+      "section": "english",
+      "difficulty": "hard"
+    },
+    {
+      "content": "His perspicacious analysis cut through the obfuscation surrounding the issue.",
+      "options": [
+        "His confusing analysis added to the lack of clarity concerning the issue.",
+        "His insightful examination clarified the deliberately confusing aspects of the matter.",
+        "He failed to analyze the issue due to its inherent obfuscation.",
+        "His analysis, while clear, avoided the central, obfuscated elements of the issue."
+      ],
+      "correctAnswer": "His insightful examination clarified the deliberately confusing aspects of the matter.",
+      "section": "english",
+      "difficulty": "medium"
+    },
+    {
+      "content": "What is the primary subject of the passage?",
+      "options": [
+        "The structure of DNA sequences.",
+        "Darwinian evolutionary theory.",
+        "The field of epigenetics: its mechanisms, implications, and relation to inheritance.",
+        "Lamarck's theory of acquired characteristics."
+      ],
+      "correctAnswer": "The field of epigenetics: its mechanisms, implications, and relation to inheritance.",
+      "section": "english",
+      "difficulty": "easy"
+    },
+    {
+      "content": "According to the passage, epigenetic modifications primarily affect:",
+      "options": [
+        "the underlying DNA sequence.",
+        "the regulation of gene expression (which genes are active).",
+        "the rate of random genetic mutations.",
+        "the process of natural selection."
+      ],
+      "correctAnswer": "the regulation of gene expression (which genes are active).",
+      "section": "english",
+      "difficulty": "easy"
+    },
+    {
+      "content": "The passage suggests that the heritability of some epigenetic changes is significant because it:",
+      "options": [
+        "proves Lamarck's original theory was entirely correct.",
+        "confirms that DNA is the sole mediator of inheritance.",
+        "offers a potential mechanism for faster adaptation and transgenerational effects beyond DNA sequence.",
+        "indicates that environmental factors cannot influence genetics."
+      ],
+      "correctAnswer": "offers a potential mechanism for faster adaptation and transgenerational effects beyond DNA sequence.",
+      "section": "english",
+      "difficulty": "medium"
+    },
+    {
+      "content": "The term \"Lamarckian element\" (line 8) implies a mechanism involving:",
+      "options": [
+        "random mutation and selection.",
+        "the inheritance of characteristics acquired or modified during an organism's lifetime.",
+        "the complete stability of the genome across generations.",
+        "genetic drift in small populations."
+      ],
+      "correctAnswer": "the inheritance of characteristics acquired or modified during an organism's lifetime.",
+      "section": "english",
+      "difficulty": "medium"
+    },
+    {
+      "content": "What can be inferred about the current scientific consensus regarding transgenerational epigenetic inheritance?",
+      "options": [
+        "It is fully understood and universally accepted as a major evolutionary force.",
+        "It is considered theoretically impossible.",
+        "Its precise role, extent, and significance, particularly in complex organisms, are still under active investigation and discussion.",
+        "It is relevant only for plants and bacteria, not animals."
+      ],
+      "correctAnswer": "Its precise role, extent, and significance, particularly in complex organisms, are still under active investigation and discussion.",
+      "section": "english",
+      "difficulty": "easy"
+    },
+    {
+      "content": "What was the initial focus of hermeneutics according to the passage?",
+      "options": [
+        "The explanation of natural phenomena.",
+        "The interpretation of religious and classical texts.",
+        "The analysis of economic systems.",
+        "The development of scientific methods."
+      ],
+      "correctAnswer": "The interpretation of religious and classical texts.",
+      "section": "english",
+      "difficulty": "easy"
+    },
+    {
+      "content": "How did Dilthey differentiate the human sciences (Geisteswissenschaften) from the natural sciences?",
+      "options": [
+        "Human sciences use explanation (Erklären), while natural sciences use interpretation (Verstehen).",
+        "Human sciences aim for interpretive understanding (Verstehen), while natural sciences seek causal explanation (Erklären).",
+        "Both sciences primarily use interpretive understanding (Verstehen).",
+        "Neither science involves interpretation according to Dilthey."
+      ],
+      "correctAnswer": "Human sciences aim for interpretive understanding (Verstehen), while natural sciences seek causal explanation (Erklären).",
+      "section": "english",
+      "difficulty": "easy"
+    },
+    {
+      "content": "What constitutes the \"fusion of horizons\" in Gadamer's hermeneutics?",
+      "options": [
+        "The merging of grammatical and psychological analysis.",
+        "The complete rejection of the interpreter's own perspective.",
+        "The dialogue and integration between the interpreter's historical context and that of the text/artifact.",
+        "The separation of the text's meaning from the author's intention."
+      ],
+      "correctAnswer": "The dialogue and integration between the interpreter's historical context and that of the text/artifact.",
+      "section": "english",
+      "difficulty": "medium"
+    },
+    {
+      "content": "According to Gadamer, what is the role of \"prejudices\" (pre-judgments) in interpretation?",
+      "options": [
+        "They are obstacles that must be eliminated to achieve objective understanding.",
+        "They are irrelevant to the interpretive process.",
+        "They form the necessary, unavoidable starting point for any act of understanding.",
+        "They guarantee the absolute truth of an interpretation."
+      ],
+      "correctAnswer": "They form the necessary, unavoidable starting point for any act of understanding.",
+      "section": "english",
+      "difficulty": "medium"
+    },
+    {
+      "content": "What is a major implication of the later hermeneutics described in the passage?",
+      "options": [
+        "Objective meaning, independent of interpretation, is easily accessible.",
+        "Understanding is primarily ahistorical and universal.",
+        "The interpreter's background and questions play a crucial role in shaping the meaning derived from a text or event.",
+        "Language is merely a transparent tool for conveying pre-existing meanings."
+      ],
+      "correctAnswer": "The interpreter's background and questions play a crucial role in shaping the meaning derived from a text or event.",
+      "section": "english",
+      "difficulty": "easy"
+    }
+  ]
+}

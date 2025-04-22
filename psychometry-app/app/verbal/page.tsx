@@ -112,15 +112,19 @@ export default function VerbalTest() {
         sections: [{
           type: 'verbal',
           isPilot: false,
-          answers: answers.map(answer => ({
-            questionId: answer.questionId.toString(),
-            selectedAnswer: answer.selectedAnswer,
-            isCorrect: answer.isCorrect,
-            timeSpent: 0 // TODO: Implement time tracking if needed
-          }))
+          answers: answers.map(answerInState => {
+            console.log(`Mapping answer for QID ${answerInState.questionId}: selectedAnswer=${answerInState.selectedAnswer} (Type: ${typeof answerInState.selectedAnswer})`);
+            return {
+              questionId: answerInState.questionId.toString(),
+              selectedAnswer: answerInState.selectedAnswer,
+              timeSpent: 0
+            };
+          })
         }],
-        overallTimeSpent: 0 // TODO: Implement time tracking if needed
+        overallTimeSpent: 0
       };
+      
+      console.log('Submitting Test Result Payload:', JSON.stringify(testResult, null, 2));
 
       // Save test attempt
       const response = await fetch('/api/test/complete', {

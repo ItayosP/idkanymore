@@ -8,6 +8,7 @@ import { useSession, signOut } from 'next-auth/react';
 export default function Header() { 
   const pathname = usePathname();
   const { data: session, status } = useSession(); // Get session status and data
+  const isAdmin = session?.user?.id === process.env.NEXT_PUBLIC_ADMIN_USER_ID;
 
   const isActive = (path: string) => pathname === path;
 
@@ -42,6 +43,16 @@ export default function Header() {
                     >
                       מבחנים
                     </Link>
+                    {isAdmin && (
+                      <Link 
+                        href="/admin/questions"
+                        className={`text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium ${
+                          isActive('/admin/questions') ? 'text-blue-600 dark:text-blue-400 font-semibold' : ''
+                        }`}
+                      >
+                        ניהול שאלות
+                      </Link>
+                    )}
                   </>
               )}
             </div>
