@@ -257,14 +257,9 @@ async function getAllQuestions(): Promise<Record<string, Question[]>> {
     {
       id: 1,
       text: "Choose the correct word to complete the sentence: The students were _____ to hear about the field trip.",
-      options: [
-        "excited",
-        "exciting",
-        "excite",
-        "excitement"
-      ],
+      options: ["excited", "exciting", "excite", "excitement"],
       correctAnswer: 0,
-      explanation: "The correct answer is 'excited' because it is an adjective describing how the students felt. 'Exciting' would describe the field trip itself, not the students' feelings."
+      explanation: "The correct answer is 'excited' because it is an adjective describing how the students felt."
     },
     {
       id: 2,
@@ -276,19 +271,14 @@ async function getAllQuestions(): Promise<Record<string, Question[]>> {
         "She worked here since 2010."
       ],
       correctAnswer: 0,
-      explanation: "The present perfect continuous tense ('has been working') is used to describe an action that started in the past and continues to the present. The word 'since' indicates the starting point of the action."
+      explanation: "The present perfect continuous tense is used for actions that started in the past and continue to the present."
     },
     {
       id: 3,
       text: "Choose the correct word: The _____ of the book was very interesting.",
-      options: [
-        "content",
-        "contain",
-        "contents",
-        "containing"
-      ],
+      options: ["content", "contain", "contents", "containing"],
       correctAnswer: 0,
-      explanation: "'Content' is the correct noun form here, referring to what is inside the book. 'Contents' would refer to a table of contents."
+      explanation: "'Content' is the correct noun form here, referring to what is inside the book."
     },
     {
       id: 4,
@@ -300,19 +290,14 @@ async function getAllQuestions(): Promise<Record<string, Question[]>> {
         "I was living here for five years."
       ],
       correctAnswer: 0,
-      explanation: "The present perfect tense ('have lived') is used to describe an action that started in the past and continues to the present. The phrase 'for five years' indicates duration."
+      explanation: "The present perfect tense is used for actions that started in the past and continue to the present."
     },
     {
       id: 5,
       text: "Choose the correct preposition: She is good _____ mathematics.",
-      options: [
-        "at",
-        "in",
-        "on",
-        "with"
-      ],
+      options: ["at", "in", "on", "with"],
       correctAnswer: 0,
-      explanation: "The preposition 'at' is used with the adjective 'good' when referring to skills or abilities."
+      explanation: "The preposition 'at' is used with the adjective 'good' when referring to skills."
     },
     {
       id: 6,
@@ -324,17 +309,12 @@ async function getAllQuestions(): Promise<Record<string, Question[]>> {
         "Neither of the answer are correct."
       ],
       correctAnswer: 0,
-      explanation: "When 'neither' is the subject, it takes a singular verb. Also, 'answers' is plural because we're referring to multiple answers."
+      explanation: "When 'neither' is the subject, it takes a singular verb."
     },
     {
       id: 7,
       text: "Choose the correct word: The _____ of the movie was unexpected.",
-      options: [
-        "ending",
-        "end",
-        "ended",
-        "ends"
-      ],
+      options: ["ending", "end", "ended", "ends"],
       correctAnswer: 0,
       explanation: "'Ending' is the correct noun form here, referring to how the movie concluded."
     },
@@ -348,17 +328,12 @@ async function getAllQuestions(): Promise<Record<string, Question[]>> {
         "She is an best student in the class."
       ],
       correctAnswer: 0,
-      explanation: "The definite article 'the' is used with superlative adjectives like 'best'."
+      explanation: "The definite article 'the' is used with superlative adjectives."
     },
     {
       id: 9,
       text: "Choose the correct word: The _____ of the problem was complex.",
-      options: [
-        "solution",
-        "solve",
-        "solving",
-        "solved"
-      ],
+      options: ["solution", "solve", "solving", "solved"],
       correctAnswer: 0,
       explanation: "'Solution' is the correct noun form here, referring to the answer to the problem."
     },
@@ -372,7 +347,102 @@ async function getAllQuestions(): Promise<Record<string, Question[]>> {
         "If I be you, I would study more."
       ],
       correctAnswer: 0,
-      explanation: "In hypothetical situations, we use 'were' instead of 'was' with 'I', even though it seems grammatically incorrect. This is called the subjunctive mood."
+      explanation: "In hypothetical situations, we use 'were' instead of 'was' with 'I'."
+    },
+    {
+      id: 11,
+      text: "Choose the correct word: The _____ of the experiment was successful.",
+      options: ["outcome", "out", "outing", "outgoing"],
+      correctAnswer: 0,
+      explanation: "'Outcome' is the correct noun form here, referring to the result of the experiment."
+    },
+    {
+      id: 12,
+      text: "Which sentence uses the correct modal verb?",
+      options: [
+        "You should have studied more.",
+        "You should had studied more.",
+        "You should has studied more.",
+        "You should having studied more."
+      ],
+      correctAnswer: 0,
+      explanation: "The correct form is 'should have' + past participle for past advice."
+    },
+    {
+      id: 13,
+      text: "Choose the correct word: The _____ of the story was surprising.",
+      options: ["plot", "plotted", "plotting", "plots"],
+      correctAnswer: 0,
+      explanation: "'Plot' is the correct noun form here, referring to the main events of the story."
+    },
+    {
+      id: 14,
+      text: "Which sentence uses the correct conditional?",
+      options: [
+        "If it rains, we will stay home.",
+        "If it rain, we will stay home.",
+        "If it raining, we will stay home.",
+        "If it rained, we will stay home."
+      ],
+      correctAnswer: 0,
+      explanation: "The first conditional uses present simple in the if-clause and future simple in the main clause."
+    },
+    {
+      id: 15,
+      text: "Choose the correct word: The _____ of the meeting was productive.",
+      options: ["outcome", "out", "outing", "outgoing"],
+      correctAnswer: 0,
+      explanation: "'Outcome' is the correct noun form here, referring to the result of the meeting."
+    },
+    {
+      id: 16,
+      text: "Which sentence uses the correct passive voice?",
+      options: [
+        "The book was written by the author.",
+        "The book was wrote by the author.",
+        "The book was writing by the author.",
+        "The book was writes by the author."
+      ],
+      correctAnswer: 0,
+      explanation: "The passive voice uses 'was' + past participle."
+    },
+    {
+      id: 17,
+      text: "Choose the correct word: The _____ of the project was impressive.",
+      options: ["scope", "scoped", "scoping", "scopes"],
+      correctAnswer: 0,
+      explanation: "'Scope' is the correct noun form here, referring to the extent of the project."
+    },
+    {
+      id: 18,
+      text: "Which sentence uses the correct reported speech?",
+      options: [
+        "She said that she was tired.",
+        "She said that she is tired.",
+        "She said that she be tired.",
+        "She said that she being tired."
+      ],
+      correctAnswer: 0,
+      explanation: "In reported speech, we backshift the tense of the original statement."
+    },
+    {
+      id: 19,
+      text: "Choose the correct word: The _____ of the argument was unclear.",
+      options: ["premise", "premised", "premising", "premises"],
+      correctAnswer: 0,
+      explanation: "'Premise' is the correct noun form here, referring to the basis of the argument."
+    },
+    {
+      id: 20,
+      text: "Which sentence uses the correct relative clause?",
+      options: [
+        "The book that I read was interesting.",
+        "The book which I read was interesting.",
+        "The book who I read was interesting.",
+        "The book whom I read was interesting."
+      ],
+      correctAnswer: 0,
+      explanation: "We use 'that' for things in defining relative clauses."
     }
   ];
 
@@ -383,51 +453,6 @@ async function getAllQuestions(): Promise<Record<string, Question[]>> {
   };
 }
 
-async function getQuestionsByIds(section: string, questionIds: number[]): Promise<Question[]> {
-  // --- IMPORTANT --- 
-  // This part needs to be implemented based on how questions are actually stored.
-  // If hardcoded (like in /api/questions), filter them here.
-  // If in DB, query the DB.
-  
-  // Example using hardcoded questions:
-  const allQuestions = await getAllQuestions(); // Fetch all hardcoded q's
-  const sectionQuestions = allQuestions[section] || [];
-  
-  // Filter the questions for the specific IDs needed for this attempt
-  const relevantQuestions = sectionQuestions.filter(q => questionIds.includes(q.id));
-  
-  // Ensure the order matches the answers if necessary, or handle potential missing questions
-  const questionMap = new Map(relevantQuestions.map(q => [q.id, q]));
-  return questionIds.map(id => questionMap.get(id)).filter(q => q !== undefined) as Question[];
-}
-
-// --- Define types matching frontend expectations ---
-interface AnswerDetail {
-  questionId: string;
-  questionText?: string; 
-  options?: string[];     
-  selectedAnswerIndex: number;
-  correctAnswerIndex?: number; // Make optional as it might not be readily available
-  isCorrect?: boolean; // Make optional as it might not be readily available
-}
-
-interface SectionResult {
-  sectionType: string; 
-  isPilot: boolean;
-  score?: number; 
-  answers?: AnswerDetail[]; 
-  essayContent?: string; 
-}
-
-interface TestAttemptResult {
-  id: string;
-  completedAt: string;
-  overallScore?: number; 
-  sections: SectionResult[];
-}
-// ---------------------------------------------
-
-// --- Updated getQuestionDetails to use hardcoded data ---
 async function getQuestionDetails(questionId: string, sectionType?: string): Promise<Question | null> {
     console.log(`Fetching details for question ID: ${questionId} (type: ${typeof questionId})`);
     
@@ -438,12 +463,19 @@ async function getQuestionDetails(questionId: string, sectionType?: string): Pro
         });
 
         if (question) {
+            // Shuffle the options and update correct answer index
+            const options = typeof question.options === 'string' ? JSON.parse(question.options) : question.options;
+            const optionIndices = options.map((_, index) => index);
+            const shuffledIndices = [...optionIndices].sort(() => Math.random() - 0.5);
+            const shuffledOptions = shuffledIndices.map(index => options[index]);
+            const newCorrectAnswerIndex = shuffledIndices.indexOf(question.correctAnswer);
+
             return {
                 id: question.id,
                 text: question.content,
-                options: typeof question.options === 'string' ? JSON.parse(question.options) : question.options,
-                correctAnswer: question.correctAnswer,
-                explanation: '' // Add explanation if available in the database
+                options: shuffledOptions,
+                correctAnswer: newCorrectAnswerIndex,
+                explanation: ''
             };
         }
     } catch (error) {
@@ -465,8 +497,17 @@ async function getQuestionDetails(questionId: string, sectionType?: string): Pro
         if (!isNaN(numericId)) {
             const foundQuestion = sectionQuestions.find(q => q.id === numericId);
             if (foundQuestion) {
-                console.log(`Found details for question ID: ${questionId} in section ${sectionType}`);
-                return foundQuestion;
+                // Shuffle the options and update correct answer index
+                const optionIndices = foundQuestion.options.map((_, index) => index);
+                const shuffledIndices = [...optionIndices].sort(() => Math.random() - 0.5);
+                const shuffledOptions = shuffledIndices.map(index => foundQuestion.options[index]);
+                const newCorrectAnswerIndex = shuffledIndices.indexOf(foundQuestion.correctAnswer);
+
+                return {
+                    ...foundQuestion,
+                    options: shuffledOptions,
+                    correctAnswer: newCorrectAnswerIndex
+                };
             }
         }
     }
@@ -497,14 +538,85 @@ async function getQuestionDetails(questionId: string, sectionType?: string): Pro
             console.warn(`Question details not found for type ${sectionType} and original ID ${originalId}`);
             return null;
         }
-        console.log(`Found details for question ID: ${questionId} (Original ID: ${originalId})`);
-        return foundQuestion;
+
+        // Shuffle the options and update correct answer index
+        const optionIndices = foundQuestion.options.map((_, index) => index);
+        const shuffledIndices = [...optionIndices].sort(() => Math.random() - 0.5);
+        const shuffledOptions = shuffledIndices.map(index => foundQuestion.options[index]);
+        const newCorrectAnswerIndex = shuffledIndices.indexOf(foundQuestion.correctAnswer);
+
+        return {
+            ...foundQuestion,
+            options: shuffledOptions,
+            correctAnswer: newCorrectAnswerIndex
+        };
     }
 
     console.warn(`Invalid question ID format: ${questionId}`);
     return null;
 }
-// -------------------------------------------------------
+
+async function getQuestionsByIds(section: string, questionIds: number[]): Promise<Question[]> {
+    const allQuestions = await getAllQuestions();
+    const sectionQuestions = allQuestions[section] || [];
+    
+    // Shuffle the questions array
+    const shuffledQuestions = [...sectionQuestions].sort(() => Math.random() - 0.5);
+    
+    // Filter the questions for the specific IDs needed for this attempt
+    const relevantQuestions = shuffledQuestions.filter(q => questionIds.includes(q.id));
+    
+    // Shuffle each question's options while maintaining the correct answer relationship
+    const shuffledQuestionsWithOptions = relevantQuestions.map(question => {
+        // Create an array of option indices
+        const optionIndices = question.options.map((_, index) => index);
+        
+        // Shuffle the option indices
+        const shuffledIndices = [...optionIndices].sort(() => Math.random() - 0.5);
+        
+        // Create new options array with shuffled order
+        const shuffledOptions = shuffledIndices.map(index => question.options[index]);
+        
+        // Find the new index of the correct answer
+        const newCorrectAnswerIndex = shuffledIndices.indexOf(question.correctAnswer);
+        
+        return {
+            ...question,
+            options: shuffledOptions,
+            correctAnswer: newCorrectAnswerIndex
+        };
+    });
+    
+    // Ensure the order matches the answers if necessary, or handle potential missing questions
+    const questionMap = new Map(shuffledQuestionsWithOptions.map(q => [q.id, q]));
+    return questionIds.map(id => questionMap.get(id)).filter(q => q !== undefined) as Question[];
+}
+
+// --- Define types matching frontend expectations ---
+interface AnswerDetail {
+  questionId: string;
+  questionText?: string; 
+  options?: string[];     
+  selectedAnswerIndex: number;
+  correctAnswerIndex?: number; // Make optional as it might not be readily available
+  isCorrect?: boolean; // Make optional as it might not be readily available
+}
+
+interface SectionResult {
+  sectionType: string; 
+  isPilot: boolean;
+  score?: number; 
+  answers?: AnswerDetail[]; 
+  essayContent?: string; 
+}
+
+interface TestAttemptResult {
+  id: string;
+  completedAt: string;
+  overallScore?: number; 
+  sections: SectionResult[];
+}
+// ---------------------------------------------
 
 export async function GET(
   request: Request,
@@ -581,7 +693,16 @@ export async function GET(
         } else if (Array.isArray(sectionData.answers)) {
             // Process all answers in parallel for better performance
             const answersPromises = sectionData.answers.map(async (ans: any): Promise<AnswerDetail> => {
-                const questionDetails = await getQuestionDetails(ans.questionId, sectionData.type);
+                // For full test, we need to ensure we're getting the right questions for each section
+                let questionDetails;
+                if (testAttempt.section === 'full_test') {
+                    // For full test, we need to construct the proper question ID
+                    const questionId = `${sectionData.type}-${sectionData.sectionIndex || 1}-${ans.questionId}`;
+                    questionDetails = await getQuestionDetails(questionId);
+                } else {
+                    // For single section tests, use the question ID as is
+                    questionDetails = await getQuestionDetails(ans.questionId, sectionData.type);
+                }
                 
                 // Calculate isCorrect by comparing selected answer with correct answer
                 const isCorrect = ans.selectedAnswerIndex === questionDetails?.correctAnswer;
@@ -597,7 +718,7 @@ export async function GET(
             });
             
             sectionResult.answers = await Promise.all(answersPromises);
-            console.log('Processed answers:', sectionResult.answers);
+            console.log(`Processed answers for section ${sectionData.type}:`, sectionResult.answers);
         }
         return sectionResult;
       })
