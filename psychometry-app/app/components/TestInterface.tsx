@@ -37,6 +37,9 @@ export default function TestInterface({ section, subcategory, isFullTest = false
   const [testPhase, setTestPhase] = useState<'options' | 'writing' | 'questions' | 'complete'>('options');
   const router = useRouter();
 
+  const currentQuestion = questions[currentQuestionIndex];
+  const isAnswerSelected = selectedAnswer !== null;
+
   const fetchQuestions = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -89,10 +92,40 @@ export default function TestInterface({ section, subcategory, isFullTest = false
     }
   }, [questions]);
 
-  const handleAnswerSelect = (answerIndex: number) => {
-    setSelectedAnswer(answerIndex);
+  // Add keyboard navigation effect
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!currentQuestion) return;
+
+      // Handle number keys 1-4 for answer selection
+      if (['1', '2', '3', '4'].includes(event.key)) {
+        const answerIndex = parseInt(event.key, 10) - 1;
+        if (answerIndex >= 0 && answerIndex < currentQuestion.options.length) {
+          handleAnswerSelect(answerIndex);
+        }
+      }
+
+      // Handle Enter key for next/finish
+      if (event.key === 'Enter') {
+        // Only proceed if an answer is selected for the current question
+        if (isAnswerSelected) {
+          if (currentQuestionIndex === questions.length - 1) {
+            handleFinishTest();
+          } else {
+            handleNextQuestion();
+          }
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [currentQuestion, currentQuestionIndex, questions.length, isAnswerSelected]);
+
+  const handleAnswerSelect = (index: number) => {
+    setSelectedAnswer(index);
     const newAnswers = [...userAnswers];
-    newAnswers[currentQuestionIndex] = answerIndex;
+    newAnswers[currentQuestionIndex] = index;
     setUserAnswers(newAnswers);
   };
 
@@ -111,8 +144,10 @@ export default function TestInterface({ section, subcategory, isFullTest = false
   };
 
   const handleFinishTest = async () => {
+    if (selectedAnswer === null) return;
+    
     const endTime = Date.now();
-    const totalTimeSpent = Math.floor((endTime - startTime) / 1000); // Convert to seconds
+    const totalTimeSpent = Math.floor((endTime - startTime) / 1000);
     
     const testResult = {
       testType: section,
@@ -123,7 +158,7 @@ export default function TestInterface({ section, subcategory, isFullTest = false
           questionId: question.id.toString(),
           selectedAnswer: userAnswers[index],
           isCorrect: userAnswers[index] === question.correctAnswer,
-          timeSpent: Math.floor(totalTimeSpent / questions.length) // Average time per question
+          timeSpent: Math.floor(totalTimeSpent / questions.length)
         }))
       }],
       overallTimeSpent: totalTimeSpent
@@ -141,22 +176,12 @@ export default function TestInterface({ section, subcategory, isFullTest = false
 
       if (response.ok) {
         const data = await response.json();
-        console.log("[handleFinishTest] API call successful, result:", data);
         if (data.attemptId) {
           router.push(`/results/${data.attemptId}`);
-        } else {
-          console.error('Error: attemptId not found in API response');
-          setError('שגיאה בהצגת התוצאות.');
         }
-      } else {
-        console.error('Error saving test results');
-        setError('שגיאה בשמירת התוצאות.');
       }
     } catch (error) {
       console.error('Error:', error);
-      setError('שגיאה בשליחת התוצאות.');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -214,8 +239,6 @@ export default function TestInterface({ section, subcategory, isFullTest = false
       </div>
     );
   }
-
-  const currentQuestion = questions[currentQuestionIndex];
 
   if (isTestComplete || testPhase === 'complete') {
     return (
@@ -314,7 +337,7 @@ export default function TestInterface({ section, subcategory, isFullTest = false
                     : 'border-gray-300 bg-white dark:bg-gray-700 hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200'
                 }`}
               >
-                {option}
+                <span className="font-mono mr-2">({index + 1})</span> {option}
               </button>
             ))}
           </div>
@@ -323,14 +346,15 @@ export default function TestInterface({ section, subcategory, isFullTest = false
             {currentQuestionIndex === questions.length - 1 ? (
               <button
                 onClick={handleFinishTest}
-                className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg"
+                disabled={selectedAnswer === null}
+                className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg disabled:opacity-50"
               >
                 סיים מבחן
               </button>
             ) : (
               <button
                 onClick={handleNextQuestion}
-                disabled={userAnswers[currentQuestionIndex] === null}
+                disabled={selectedAnswer === null}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg disabled:opacity-50"
               >
                 שאלה הבאה
