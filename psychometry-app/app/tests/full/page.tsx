@@ -62,7 +62,6 @@ interface SectionSubmissionData {
 
 export default function FullTestPage() {
   const [currentStep, setCurrentStep] = useState(0);
-  const [essayPosition, setEssayPosition] = useState<'start' | 'end' | null>(null);
   const [testSequence, setTestSequence] = useState<SectionDefinition[] | null>(null);
   const [essayContent, setEssayContent] = useState<string>('');
   const [allAnswers, setAllAnswers] = useState<{ [sectionIndex: number]: { [questionId: string]: number } }>({});
@@ -70,7 +69,25 @@ export default function FullTestPage() {
   const [isLoading, setIsLoading] = useState(false); // Loading state for questions
   const [isSubmitting, setIsSubmitting] = useState(false); // Submission loading state
   const [submissionError, setSubmissionError] = useState<string | null>(null);
-  const router = useRouter(); // Get router instance
+  const router = useRouter();
+
+  // Initialize test sequence on component mount
+  useEffect(() => {
+    const essayTask = BASE_TEST_STRUCTURE.find(s => s.type === 'essay');
+    let mcSections = BASE_TEST_STRUCTURE.filter(s => s.type !== 'essay');
+    
+    // Shuffle the MC sections
+    mcSections = shuffleArray(mcSections);
+    
+    if (!essayTask) {
+      console.error("Essay task definition missing!");
+      return;
+    }
+
+    // Always place essay at the start
+    const sequence: SectionDefinition[] = [essayTask, ...mcSections];
+    setTestSequence(sequence);
+  }, []);
 
   // --- Question Fetching Logic (Placeholder) ---
   useEffect(() => {
@@ -109,44 +126,6 @@ export default function FullTestPage() {
 
   }, [currentStep, testSequence, sectionQuestions]);
   // ----------------------------------------------
-
-  const handleEssayPositionSelect = (position: 'start' | 'end') => {
-    setEssayPosition(position);
-    
-    const essayTask = BASE_TEST_STRUCTURE.find(s => s.type === 'essay');
-    let mcSections = BASE_TEST_STRUCTURE.filter(s => s.type !== 'essay');
-    
-    // --- Pilot Section Handling ---
-    // Determine actual types for pilot sections (e.g., randomly assign)
-    // For now, let's keep them marked as 'pilot' but assign a specific type internally if needed
-    const pilotSections = mcSections.filter(s => s.type === 'pilot');
-    const nonPilotSections = mcSections.filter(s => s.type !== 'pilot');
-
-    // Example: Randomly assign types to pilot sections (or fetch specific pilot sets)
-    // const possiblePilotTypes = ['verbal', 'quantitative', 'english'];
-    // pilotSections[0].actualType = possiblePilotTypes[Math.floor(Math.random() * 3)];
-    // pilotSections[1].actualType = possiblePilotTypes[Math.floor(Math.random() * 3)];
-    // --- (End Pilot Handling Example) ---
-    
-    mcSections = shuffleArray(mcSections); // Shuffle the MC sections
-    // ------------------------------
-
-    if (!essayTask) {
-      console.error("Essay task definition missing!");
-      return;
-    }
-
-    let sequence: SectionDefinition[] = [];
-    if (position === 'start') {
-      sequence = [essayTask, ...mcSections];
-    } else {
-      sequence = [...mcSections, essayTask];
-    }
-    setTestSequence(sequence);
-    setCurrentStep(0); 
-    setAllAnswers({}); // Reset answers
-    setSectionQuestions({}); // Reset questions
-  };
 
   const handleSaveEssay = (text: string) => {
     console.log("Handling essay save in FullTestPage...");
@@ -237,26 +216,13 @@ export default function FullTestPage() {
     }
   };
 
-  // Render the initial choice screen
-  if (!essayPosition || !testSequence) {
+  // Render the initial loading screen
+  if (!testSequence) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gray-100 dark:bg-gray-900">
         <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">מבחן פסיכומטרי מלא</h1>
-        <p className="mb-4 text-gray-700 dark:text-gray-300">האם תרצה/י לבצע את מטלת הכתיבה בתחילת המבחן או בסופו?</p>
-        <div className="flex space-x-4 space-x-reverse">
-          <button 
-            onClick={() => handleEssayPositionSelect('start')} 
-            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm transition duration-150 ease-in-out"
-          >
-            בתחילה
-          </button>
-          <button 
-            onClick={() => handleEssayPositionSelect('end')} 
-            className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-sm transition duration-150 ease-in-out"
-          >
-            בסוף
-          </button>
-        </div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <p className="mt-4 text-gray-700 dark:text-gray-300">מכין את המבחן...</p>
       </div>
     );
   }

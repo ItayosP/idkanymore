@@ -170,12 +170,12 @@ export default function ResultsPage() {
                       <p className="font-semibold text-gray-900 dark:text-white mb-2">
                         שאלה {index + 1}: {answer.questionText}
                       </p>
-                      <div className="space-y-2">
-                        {answer.options?.map((option, optionIndex) => {
-                          const isSelected = optionIndex === answer.selectedAnswerIndex;
-                          const isCorrect = optionIndex === answer.correctAnswerIndex;
+                      <div className="space-y-1 text-sm">
+                        {answer.options.map((option, oIndex) => {
+                          const isSelected = oIndex === answer.selectedAnswerIndex;
+                          const isCorrect = oIndex === answer.correctAnswerIndex;
                           
-                          // Only show this option if:
+                          // Show the option if:
                           // 1. The answer was correct and this is the correct option
                           // 2. The answer was wrong and this is either the selected option or the correct option
                           const shouldShowOption = 
@@ -184,7 +184,7 @@ export default function ResultsPage() {
                           
                           if (!shouldShowOption) return null;
                           
-                          let className = "p-2 rounded ";
+                          let className = "p-1 rounded ";
                           if (isCorrect) {
                             className += "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200";
                           } else if (isSelected && !answer.isCorrect) {
@@ -192,8 +192,8 @@ export default function ResultsPage() {
                           }
                           
                           return (
-                            <p key={optionIndex} className={className}>
-                              ({optionIndex + 1}) {option}
+                            <p key={oIndex} className={className}>
+                              ({oIndex + 1}) {option}
                               {isSelected && (
                                 <span className="mr-2 font-medium">
                                   {answer.isCorrect ? '✅ תשובתך נכונה' : '❌ תשובתך שגויה'}
@@ -273,17 +273,42 @@ export default function ResultsPage() {
                         </p>
                         {/* TODO: Display passage if available */}
                         <div className="space-y-1 text-sm">
-                          {answer.options.map((option, oIndex) => (
-                             <p key={oIndex} className={
-                              `p-1 rounded ${oIndex === answer.correctAnswerIndex ? 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200' : ''} 
-                               ${oIndex === answer.selectedAnswerIndex && !answer.isCorrect ? 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200' : ''}
-                               ${oIndex === answer.selectedAnswerIndex && answer.isCorrect ? 'font-bold' : ''}
-                               `
-                             }>
-                               ({oIndex + 1}) {option}
-                               {oIndex === answer.selectedAnswerIndex && <span> (תשובתך {answer.isCorrect ? '✅' : '❌'})</span>}
-                             </p>
-                          ))}
+                          {answer.options.map((option, oIndex) => {
+                            const isSelected = oIndex === answer.selectedAnswerIndex;
+                            const isCorrect = oIndex === answer.correctAnswerIndex;
+                            
+                            // Show the option if:
+                            // 1. The answer was correct and this is the correct option
+                            // 2. The answer was wrong and this is either the selected option or the correct option
+                            const shouldShowOption = 
+                              (answer.isCorrect && isCorrect) || 
+                              (!answer.isCorrect && (isSelected || isCorrect));
+                            
+                            if (!shouldShowOption) return null;
+                            
+                            let className = "p-1 rounded ";
+                            if (isCorrect) {
+                              className += "bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200";
+                            } else if (isSelected && !answer.isCorrect) {
+                              className += "bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200";
+                            }
+                            
+                            return (
+                              <p key={oIndex} className={className}>
+                                ({oIndex + 1}) {option}
+                                {isSelected && (
+                                  <span className="mr-2 font-medium">
+                                    {answer.isCorrect ? '✅ תשובתך נכונה' : '❌ תשובתך שגויה'}
+                                  </span>
+                                )}
+                                {!answer.isCorrect && isCorrect && (
+                                  <span className="mr-2 font-medium text-green-700 dark:text-green-300">
+                                    (התשובה הנכונה)
+                                  </span>
+                                )}
+                              </p>
+                            );
+                          })}
                         </div>
                          {/* TODO: Add Explanation field if available */}
                       </li>

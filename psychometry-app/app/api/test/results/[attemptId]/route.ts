@@ -543,13 +543,16 @@ export async function GET(
             const answersPromises = sectionData.answers.map(async (ans: any): Promise<AnswerDetail> => {
                 const questionDetails = await getQuestionDetails(ans.questionId);
                 
+                // Calculate isCorrect by comparing selected answer with correct answer
+                const isCorrect = ans.selectedAnswerIndex === questionDetails?.correctAnswer;
+                
                 return {
                     questionId: ans.questionId,
                     selectedAnswerIndex: ans.selectedAnswerIndex,
                     questionText: questionDetails?.text ?? `טקסט שאלה חסר (ID: ${ans.questionId})`,
                     options: questionDetails?.options ?? [],
                     correctAnswerIndex: questionDetails?.correctAnswer,
-                    isCorrect: ans.isCorrect
+                    isCorrect: isCorrect
                 };
             });
             
