@@ -1,159 +1,100 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Question } from '@prisma/client';
+import fs from 'fs';
+import path from 'path';
 
 const prisma = new PrismaClient();
 
-const verbalQuestions = [
-  {
-    content: 'מה המשמעות של המילה "נדיב"?',
-    options: ['טוב לב', 'אכזר', 'אדיש', 'כועס'],
-    correctAnswer: 'טוב לב',
-    section: 'verbal',
-    difficulty: 'easy'
-  },
-  {
-    content: 'מה המילה ההפוכה במשמעותה ל"שקט"?',
-    options: ['שליו', 'סוער', 'רגוע', 'נינוח'],
-    correctAnswer: 'סוער',
-    section: 'verbal',
-    difficulty: 'medium'
-  },
-  {
-    content: 'מה המשמעות של הביטוי "להחזיק את המקל בשני קצותיו"?',
-    options: ['לנסות לרצות את כולם', 'להתאמן בספורט', 'להתמודד עם קושי', 'להתנהג בחוסר החלטיות'],
-    correctAnswer: 'להתנהג בחוסר החלטיות',
-    section: 'verbal',
-    difficulty: 'hard'
-  },
-  {
-    content: 'מה המשמעות של המילה "אפיסטמולוגיה"?',
-    options: ['תורת ההכרה', 'תורת המוסר', 'תורת הלוגיקה', 'תורת האסתטיקה'],
-    correctAnswer: 'תורת ההכרה',
-    section: 'verbal',
-    difficulty: 'very_hard'
-  },
-  {
-    content: 'מה המשמעות של הביטוי "הניסיון ל________ את מורכבותה של התופעה לכדי מודל ________ ופשטני, ________ בהכרח את רבדיה העמוקים ואת הגורמים הרבים המעצבים אותה"?',
-    options: ['לצמצם / ליניארי / מתעלם מ-', 'להרחיב / רב-ממדי / מדגיש את', 'לתאר / הוליסטי / כולל את', 'לנתח / מפורט / מחמיץ את'],
-    correctAnswer: 'לצמצם / ליניארי / מתעלם מ-',
-    section: 'verbal',
-    difficulty: 'extreme'
-  }
-];
+// Define an interface for the structure of questions in the JSON file
+interface JsonQuestion {
+  id: number | string; // ID might be number or string in JSON
+  text: string;
+  options: string[];
+  correctAnswer: number; // Expecting the index
+  explanation?: string;
+  // Add other fields if they exist in your JSON (e.g., difficulty, section)
+}
 
-const quantitativeQuestions = [
-  {
-    content: 'אם x + 5 = 12, מה ערכו של x?',
-    options: ['5', '7', '12', '17'],
-    correctAnswer: '7',
-    section: 'quantitative',
-    difficulty: 'easy'
-  },
-  {
-    content: 'מה שטחו של מלבן שאורכו 8 ורוחבו 5?',
-    options: ['13', '26', '40', '45'],
-    correctAnswer: '40',
-    section: 'quantitative',
-    difficulty: 'medium'
-  },
-  {
-    content: 'בכמה דרכים ניתן לסדר 4 ספרי מתמטיקה שונים ו-3 ספרי פיזיקה שונים על מדף כך שכל ספרי המתמטיקה יעמדו יחד וכל ספרי הפיזיקה יעמדו יחד?',
-    options: ['4!×3!', '7!', '2×4!×3!', '(7,4)×4!×3!'],
-    correctAnswer: '2×4!×3!',
-    section: 'quantitative',
-    difficulty: 'hard'
-  },
-  {
-    content: 'מהו ערך הביטוי √6+√6+√6+...?',
-    options: ['2', '√6', '3', '2/3'],
-    correctAnswer: '3',
-    section: 'quantitative',
-    difficulty: 'very_hard'
-  },
-  {
-    content: 'במסיבה 5 זוגות נשואים. בוחרים באקראי 4 אנשים. מה ההסתברות שנבחר בדיוק זוג נשוי אחד?',
-    options: ['(10,4)(5,1)(2,4)/2', '(10,4)5×8×6', '(10,4)5×(8,2)', '(10,4)5×4×3×2'],
-    correctAnswer: '(10,4)5×8×6',
-    section: 'quantitative',
-    difficulty: 'extreme'
-  }
-];
-
-const englishQuestions = [
-  {
-    content: 'Choose the correct sentence:',
-    options: [
-      'She don\'t like coffee.',
-      'She doesn\'t likes coffee.',
-      'She doesn\'t like coffee.',
-      'She don\'t likes coffee.'
-    ],
-    correctAnswer: 'She doesn\'t like coffee.',
-    section: 'english',
-    difficulty: 'easy'
-  },
-  {
-    content: 'Select the sentence with the correct punctuation:',
-    options: [
-      'The cat, which was black, sat on the mat.',
-      'The cat which was black sat on the mat.',
-      'The cat, which was black sat on the mat.',
-      'The cat which was black, sat on the mat.'
-    ],
-    correctAnswer: 'The cat, which was black, sat on the mat.',
-    section: 'english',
-    difficulty: 'medium'
-  },
-  {
-    content: 'Choose the correct word to complete the sentence: The committee\'s final report was criticized for its _______ conclusions, which seemed to deliberately avoid addressing the core issues.',
-    options: ['trenchant', 'unequivocal', 'perspicacious', 'equivocal'],
-    correctAnswer: 'equivocal',
-    section: 'english',
-    difficulty: 'hard'
-  },
-  {
-    content: 'What is the primary subject of the passage about hermeneutics?',
-    options: [
-      'The explanation of natural phenomena',
-      'The interpretation of religious and classical texts',
-      'The analysis of economic systems',
-      'The development of scientific methods'
-    ],
-    correctAnswer: 'The interpretation of religious and classical texts',
-    section: 'english',
-    difficulty: 'very_hard'
-  },
-  {
-    content: 'According to Gadamer, what constitutes the "fusion of horizons" in hermeneutics?',
-    options: [
-      'The merging of grammatical and psychological analysis',
-      'The complete rejection of the interpreter\'s own perspective',
-      'The dialogue and integration between the interpreter\'s historical context and that of the text/artifact',
-      'The separation of the text\'s meaning from the author\'s intention'
-    ],
-    correctAnswer: 'The dialogue and integration between the interpreter\'s historical context and that of the text/artifact',
-    section: 'english',
-    difficulty: 'extreme'
-  }
-];
+// Define the expected structure of the JSON file
+interface QuestionsJson {
+  [section: string]: JsonQuestion[];
+}
 
 async function main() {
-  console.log('Seeding database...');
+  console.log('Seeding database from JSON file...');
 
-  // Clear existing questions
-  await prisma.question.deleteMany();
-  console.log('Cleared existing questions');
+  // --- 1. Read the JSON file --- 
+  let questionsData: QuestionsJson;
+  try {
+    // Adjust the path as needed relative to the location of seed.ts
+    const jsonPath = path.join(__dirname, '../docs/questions-import-template.json');
+    console.log(`Reading questions from: ${jsonPath}`);
+    const fileContent = fs.readFileSync(jsonPath, 'utf-8');
+    questionsData = JSON.parse(fileContent);
+    console.log('Successfully read and parsed JSON file.');
+  } catch (error) {
+    console.error('Error reading or parsing questions JSON file:', error);
+    // If the file doesn't exist or is invalid, exit gracefully
+    // Alternatively, you could proceed without seeding questions
+    process.exit(1);
+  }
 
-  // Add questions to the database
-  await prisma.question.createMany({
-    data: [...verbalQuestions, ...quantitativeQuestions, ...englishQuestions]
-  });
+  // --- 2. Transform the data --- 
+  const questionsForDb: Omit<Question, 'id'>[] = [];
+  for (const sectionKey in questionsData) {
+    if (Object.prototype.hasOwnProperty.call(questionsData, sectionKey)) {
+      const sectionQuestions = questionsData[sectionKey];
+      sectionQuestions.forEach((q) => {
+        if (!q.text || !q.options || typeof q.correctAnswer !== 'number') {
+           console.warn(`Skipping question due to missing data (ID: ${q.id}, Section: ${sectionKey}):`, q);
+           return; // Skip if essential data is missing
+        }
+        questionsForDb.push({
+          content: q.text, // Map 'text' to 'content'
+          options: JSON.stringify(q.options), // Stringify the options array
+          correctAnswer: q.correctAnswer.toString(), // Convert number index to string
+          section: sectionKey, // Use the key from the JSON as the section
+          difficulty: 'medium', // Assign a default difficulty or get from JSON if available
+          explanation: q.explanation || '', // Use explanation if available
+          // NOTE: We omit the 'id' field from the JSON 
+          //       to let Prisma auto-generate the ID.
+        });
+      });
+    }
+  }
+  console.log(`Prepared ${questionsForDb.length} questions for database insertion.`);
+
+  // --- 3. Clear existing questions (optional but recommended for seeding) --- 
+  console.log('Clearing existing questions...');
+  try {
+    await prisma.question.deleteMany();
+    console.log('Successfully cleared existing questions.');
+  } catch (error) {
+     console.error("Error clearing questions:", error);
+     // Decide if you want to proceed even if clearing fails
+  }
+ 
+  // --- 4. Add questions to the database --- 
+  if (questionsForDb.length > 0) {
+      console.log('Inserting new questions...');
+      try {
+        await prisma.question.createMany({
+          data: questionsForDb,
+          // skipDuplicates: true, // Removed: Not supported by SQLite
+        });
+        console.log(`Successfully inserted ${questionsForDb.length} questions.`);
+      } catch (error) {
+         console.error("Error inserting questions:", error);
+      }
+  } else {
+      console.log("No valid questions found in JSON to insert.");
+  }
 
   console.log('Seeding finished.');
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error('Unhandled error in main seed function:', e);
     process.exit(1);
   })
   .finally(async () => {
